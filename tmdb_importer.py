@@ -7,7 +7,8 @@ import time # Import the time module for delays
 
 # --- SETUP ---
 tmdb = TMDb()
-tmdb.api_key = "fec6d2a69059cf2444c7f5d84f38e82d" 
+tmdb.api_key = "YOUR_API_KEY"
+
 tmdb.language = 'en'
 tmdb.debug = True
 
@@ -191,4 +192,5 @@ def save_movie(movie_data):
     )
 
     db.session.add(movie)
+
     db.session.commit()
