@@ -2,7 +2,8 @@ import os
 import requests
 import csv
 
-API_KEY = "fec6d2a69059cf2444c7f5d84f38e82d"
+API_KEY = "YOUR_API_KEY"
+
 
 BASE_URL = 'https://api.themoviedb.org/3/movie/popular'
 GENRE_URL = 'https://api.themoviedb.org/3/genre/movie/list'
@@ -58,4 +59,5 @@ if movies:
         writer.writerows(movies)
     print(f"\nSuccessfully saved {len(movies)} movies to movies.csv")
 else:
+
     print("\nNo movies were fetched. The CSV file was not created.")
