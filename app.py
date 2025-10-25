@@ -20,7 +20,8 @@ from werkzeug.utils import secure_filename
 
 # --- Initial Setup & Configuration ---
 try:
-    r = requests.get("https://api.themoviedb.org/3/movie/popular?api_key=fec6d2a69059cf2444c7f5d84f38e82d")
+    r = requests.get("https://api.themoviedb.org/3/movie/popular?api_key="YOUR_API_KEY"
+")
     print("TMDB Test Status:", r.status_code)
 except Exception as e:
     print("TMDB Test Failed:", e)
@@ -1039,3 +1040,4 @@ if __name__ == '__main__':
     # Run the app AFTER all setup is complete
 
     app.run(debug=False, host="0.0.0.0", port=5501)
+
