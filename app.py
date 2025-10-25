@@ -26,7 +26,7 @@ except Exception as e:
     print("TMDB Test Failed:", e)
 
 TMDB_BASE_URL = "https://api.themoviedb.org/3"
-TMDB_API_KEY = "fec6d2a69059cf2444c7f5d84f38e82d"
+TMDB_API_KEY = "YOUR_API_KEY"
 # --- App Configuration ---
 app = Flask(__name__)
 app.secret_key = os.environ.get('SECRET_KEY', 'default_super_secret_key_for_dev')
@@ -1037,4 +1037,5 @@ if __name__ == '__main__':
         # fetch_and_store_trending_movies(app)
     
     # Run the app AFTER all setup is complete
+
     app.run(debug=False, host="0.0.0.0", port=5501)
