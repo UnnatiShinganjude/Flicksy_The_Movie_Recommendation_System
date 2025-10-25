@@ -7,7 +7,8 @@ import requests
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
-TMDB_API_KEY = "fec6d2a69059cf2444c7f5d84f38e82d" 
+TMDB_API_KEY = "YOUR_API_KEY"
+ 
 GENRE_MAP = {}
 
 # --- Session with retries (no changes) ---
@@ -144,4 +145,5 @@ if __name__ == '__main__':
                 description = f"{lang_name} '{genre_name}' movies"
                 fetch_and_save_movies(discover_url, description)
             
+
         print("\nDatabase population script finished!")
