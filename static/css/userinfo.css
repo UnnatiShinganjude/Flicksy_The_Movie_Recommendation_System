@@ -1,0 +1,144 @@
+    /* ---------- Body & Background ---------- */
+    html, body {
+        background: linear-gradient(to bottom, #05060a, #0b0f1a); 
+        color: #e6ebf3; 
+        font-family:'Plus Jakarta Sans';
+        /* Allow vertical scrolling while preventing horizontal overflow */
+        overflow-y: scroll;
+        overflow-x: hidden;
+        /* HIDE SCROLLBAR FOR FIREFOX */
+        scrollbar-width: none; 
+    }
+
+    /* HIDE SCROLLBAR FOR WEBKIT BROWSERS (Chrome, Safari, Edge) */
+    html::-webkit-scrollbar, body::-webkit-scrollbar {
+        width: 0px;  /* Hides the vertical scrollbar */
+        height: 0px; /* Hides the horizontal scrollbar */
+    }
+
+    /* ---------- Stars Animation ---------- */
+    .stars, .stars:before, .stars:after {
+        position: fixed; top:0; left:0; width:100%; height:100%; content:""; pointer-events:none; background-repeat:repeat; background-size:contain;
+    }
+    .stars { 
+        background-image: radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,.6) 50%, transparent 51%),
+                          radial-gradient(1px 1px at 120px 80px, rgba(255,255,255,.35) 50%, transparent 51%),
+                          radial-gradient(1px 1px at 300px 200px, rgba(255,255,255,.25) 50%, transparent 51%);
+        animation: drift 90s linear infinite; 
+    }
+    .stars:before { 
+        background-image: radial-gradient(1px 1px at 50px 60px, rgba(255,255,255,.5) 50%, transparent 51%),
+                          radial-gradient(1px 1px at 250px 140px, rgba(255,255,255,.4) 50%, transparent 51%);
+        animation: drift 120s linear infinite reverse; 
+        opacity:.7; 
+    }
+    .stars:after { 
+        background-image: radial-gradient(2px 2px at 160px 40px, rgba(255,255,255,.25) 50%, transparent 51%),
+                          radial-gradient(1px 1px at 90px 250px, rgba(255,255,255,.3) 50%, transparent 51%);
+        animation: drift 150s linear infinite; 
+        opacity:.5; 
+    }
+    @keyframes drift { 
+        from { background-position:0 0,0 0,0 0; } 
+        to { background-position:-2000px -1200px,1000px -800,-1500px 1200px; } 
+    }
+
+    /* ---------- Floating Panels ---------- */
+    @keyframes float {0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);} }
+    .float { animation: float 6s ease-in-out infinite alternate; }
+
+    /* ---------- Glass Effect ---------- */
+    .glass { 
+        backdrop-filter: blur(15px); 
+        background: rgba(16,18,26,0.8); 
+        border: 1px solid rgba(255,255,255,0.1); 
+        border-radius: 2rem; 
+        box-shadow: 0 8px 32px rgba(0,0,0,0.6); 
+        position: relative; 
+    }
+
+    /* ---------- Button Selection ---------- */
+    .selected-btn { 
+        border: 2px solid #ec4899; 
+        color:#f472b6; 
+    }
+
+    /* ---------- Actor Image Selection ---------- */
+    .actor { 
+        border-radius:50%; 
+        border:2px solid transparent; 
+        cursor:pointer; 
+        transition:0.3s; 
+    }
+    .actor.selected { 
+        border-color:#ec4899; 
+    }
+    .panel img:hover { 
+        transform: scale(1.05); 
+        transition: 0.3s ease; 
+    }
+
+    /* ---------- Shimmer Effect ---------- */
+    .shimmer-glow {
+        position:absolute; inset:0; border-radius:2rem;
+        background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
+        transform: translateX(-100%);
+        animation: shimmerSlow 6s infinite linear;
+        pointer-events:none;
+        z-index:1;
+    }
+    @keyframes shimmerSlow {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    /* ---------- Profile Overlay Glass Panel ---------- */
+    #profileForm .glass {
+        max-height: 90vh;
+        overflow-y: auto;
+        overflow-x: hidden;
+        padding: 2rem;
+        border-radius: 2rem;
+        background: rgba(16,18,26,0.8);
+        backdrop-filter: blur(15px);
+        border: 2px solid rgba(255,255,255,0.2);
+        box-shadow: 0 0 20px rgba(236,72,153,0.6), 0 0 40px rgba(236,72,153,0.3), 0 0 60px rgba(236,72,153,0.2);
+        position: relative;
+        -ms-overflow-style: none; /* Hides scrollbar on older browsers */
+        scrollbar-width: none; /* Hides scrollbar on Firefox */
+    }
+
+    #profileForm .glass::-webkit-scrollbar { 
+        width: 0px; 
+        background: transparent; 
+    }
+
+    /* ---------- Profile Picture Button ---------- */
+    #profilePicInput {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        border-radius: 1rem;
+        background: linear-gradient(135deg, #ec4899, #8b5cf6);
+        color: white;
+        font-weight: 600;
+        cursor: pointer;
+        border: none;
+        transition: all 0.3s ease;
+        box-shadow: 0 0 10px rgba(236,72,153,0.6), 0 0 20px rgba(139,92,246,0.4);
+    }
+    #profilePicInput:hover {
+        transform: scale(1.05);
+        box-shadow: 0 0 20px rgba(236,72,153,0.8), 0 0 40px rgba(139,92,246,0.6);
+    }
+    @keyframes spinLogo {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+
+    .spinning-logo {
+        animation: spinLogo 10s linear infinite;
+    }
+/* Add this to the end of static/css/userinfo.css */
+.selected-panel {
+    border: 2px solid #FBBF24; /* This creates a yellow highlight */
+}

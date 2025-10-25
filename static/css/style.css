@@ -1,0 +1,122 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,300;0,400;0,500;1,500&display=swap');
+/* ========== General Styles ========== */
+
+.animate-glow-text {
+  animation: glow 2s ease-in-out infinite alternate;
+}
+
+@keyframes glow {
+  from {
+    text-shadow: 0 0 10px #fff, 0 0 20px #ff5e84, 0 0 30px #ff5e84;
+  }
+  to {
+    text-shadow: 0 0 20px #fff, 0 0 40px #ff5e84, 0 0 60px #ff5e84;
+  }
+}
+
+
+
+        :where([class^="ri-"])::before { content: "\f3c2"; }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #f9fafb;
+        }
+        .hero-section {
+            background-image: linear-gradient(to right, rgba(0, 0, 0, 0.9), rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 0.4)), url('https://readdy.ai/api/search-image?query=cinematic%20scene%20with%20dramatic%20lighting%2C%20showing%20a%20modern%20movie%20theater%20with%20comfortable%20seats%2C%20high-quality%20projection%20screen%20displaying%20an%20epic%20movie%20scene%2C%20atmospheric%20lighting%2C%20high-end%20audio%20visual%20equipment%2C%20premium%20movie%20experience%2C%20ultra-realistic%2C%20photorealistic%2C%208k%20resolution%2C%20professional%20photography&width=1600&height=600&seq=hero1&orientation=landscape');
+            background-size: cover;
+            background-position: center;
+        }
+        .movie-card {
+            transition: all 0.3s ease;
+        }
+        .movie-card:hover {
+            transform: translateY(-5px);
+        }
+        .platform-tab.active {
+            border-bottom: 2px solid #8C52FF;
+            color: #8C52FF;
+        }
+        .carousel-item *{
+            transition: opacity 0.5s ease;
+            pointer-events: auto;
+        }
+        .search-input:focus {
+            box-shadow: 0 0 0 2px rgba(140, 82, 255, 0.2);
+        }
+
+        
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 18px;
+            height: 18px;
+            border-radius: 50%;
+            background: #8C52FF;
+            cursor: pointer;
+        }
+        .custom-switch {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+        .custom-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 34px;
+        }
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 18px;
+            width: 18px;
+            left: 3px;
+            bottom: 3px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+        input:checked + .slider {
+            background-color: #8C52FF;
+        }
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+        .carousel-controls {
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+        .carousel-container:hover .carousel-controls {
+            opacity: 1;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #d1d5db;
+            border-radius: 10px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #a8a8a8;
+        }
+
+
+.contact-background {
+    background-image: url('/static/images/contact-img.jpg');
+}
+
