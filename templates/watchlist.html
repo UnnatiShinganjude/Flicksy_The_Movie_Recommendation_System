@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flicksy — My Watchlist</title>
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+
+    <style>
+        :root {
+            --bg-dark: #1d1145;
+            --text-light: #e0e0e0;
+            --accent-gold: #ffc107;
+            --secondary-purple: #3e2f5b;
+            --glow-color: #8a2be2;
+        }
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-light);
+            font-family: 'Montserrat', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        @keyframes glow {
+            0%, 100% { text-shadow: 0 0 8px var(--glow-color), 0 0 20px var(--glow-color); }
+            50% { text-shadow: 0 0 25px var(--glow-color), 0 0 40px var(--glow-color); }
+        }
+        .animate-glow-text { 
+            animation: glow 2s ease-in-out infinite alternate; 
+        }
+        .horizontal-scroll-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 2rem;
+            padding: 1rem;
+        }
+        .watchlist-item {
+            width: 100%;
+            aspect-ratio: 2 / 3;
+            border-radius: 1.25rem;
+            overflow: hidden;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            cursor: pointer;
+            border: 1px solid rgba(255, 193, 7, 0.2);
+        }
+        .watchlist-item:hover { 
+            transform: scale(1.05) translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.7), 0 0 25px var(--accent-gold);
+        }
+        .watchlist-poster { 
+            width: 100%; 
+            height: 100%; 
+            object-fit: cover; 
+        }
+        .watchlist-overlay {
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 20%, transparent 100%);
+            color: #fff;
+            padding: 1.5rem;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+        .watchlist-item:hover .watchlist-overlay { 
+            opacity: 1;
+        }
+        .overlay-title { 
+            font-weight: 700; 
+            font-size: 1.3rem;
+            color: var(--accent-gold);
+            transform: translateY(20px);
+            opacity: 0;
+            transition: transform 0.4s ease 0.1s, opacity 0.4s ease 0.1s;
+        }
+        .watchlist-item:hover .overlay-title {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        .overlay-desc, .star-rating, .overlay-buttons {
+            transform: translateY(20px);
+            opacity: 0;
+            transition: transform 0.4s ease, opacity 0.4s ease;
+        }
+        .watchlist-item:hover .overlay-desc { transition-delay: 0.2s; transform: translateY(0); opacity: 1; }
+        .watchlist-item:hover .star-rating { transition-delay: 0.2s; transform: translateY(0); opacity: 1; }
+        .watchlist-item:hover .overlay-buttons { transition-delay: 0.3s; transform: translateY(0); opacity: 1; }
+        .overlay-desc { font-size: .85rem; color: var(--text-light); margin-bottom: .8rem; }
+        .overlay-buttons { display: flex; gap: .75rem; }
+        .overlay-buttons a, .overlay-buttons button { padding: .6rem 1rem; border: none; border-radius: .75rem; font-size: .9rem; cursor: pointer; transition: all .3s ease; font-weight: 600; display: inline-flex; align-items: center; gap: 0.5rem; }
+        .watch-btn { background: var(--accent-gold); color: var(--bg-dark); }
+        .remove-btn { background: var(--secondary-purple); color: white; }
+        .star-rating { margin-bottom: .5rem; font-size: 1rem; color: var(--accent-gold); }
+    </style>
+</head>
+<body>
+
+    
+    <div class="max-w-7xl mx-auto mt-24 px-4">
+        <h2 class="text-5xl font-extrabold text-center mb-12 animate-glow-text" style="color: var(--accent-gold);">My Watchlist</h2>
+        
+        <div id="watchlist-container" class="horizontal-scroll-container">
+            <p class="text-center text-gray-400 text-lg col-span-full">Loading your watchlist...</p>
+        </div>
+    </div>
+
+    <script src="{{ url_for('static', filename='js/watchlist.js') }}"></script>
+</body>
+</html>

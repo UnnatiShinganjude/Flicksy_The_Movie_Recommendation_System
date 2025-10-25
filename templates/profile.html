@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flicksy — User Profile</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.5.0/fonts/remixicon.css" rel="stylesheet">
+
+
+<style>
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0; padding: 0;
+    min-height: 100vh;
+    background: linear-gradient(-45deg, #0b0f1a, #1c1f2a, #2b1e3f, #0b0f1a);
+    background-size: 400% 400%;
+    animation: gradientBG 25s ease infinite;
+    color: #e6ebf3;
+    overflow-x: hidden;
+    position: relative;
+}
+
+@keyframes gradientBG {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+.stars-container, .stars-container::before, .stars-container::after {
+    position: fixed; top:0; left:0; width:100%; height:100%; content:""; pointer-events:none; background-repeat:repeat; background-size:contain;
+    z-index: -1;
+}
+.stars-container { 
+    background-image: radial-gradient(2px 2px at 20px 30px, rgba(255,255,255,1) 50%, transparent 51%),
+                      radial-gradient(2px 2px at 120px 80px, rgba(255,255,255,.8) 50%, transparent 51%),
+                      radial-gradient(2px 2px at 300px 200px, rgba(255,255,255,.6) 50%, transparent 51%);
+    animation: drift 90s linear infinite; 
+}
+.stars-container::before { 
+    background-image: radial-gradient(3px 3px at 50px 60px, rgba(255,255,255,.8) 50%, transparent 51%),
+                      radial-gradient(2px 2px at 250px 140px, rgba(255,255,255,.6) 50%, transparent 51%);
+    animation: drift 120s linear infinite reverse; 
+    opacity:.7; 
+}
+.stars-container::after { 
+    background-image: radial-gradient(3px 3px at 160px 40px, rgba(255,255,255,.6) 50%, transparent 51%),
+                      radial-gradient(2px 2px at 90px 250px, rgba(255,255,255,.5) 50%, transparent 51%);
+    animation: drift 150s linear infinite; 
+    opacity:.5; 
+}
+@keyframes drift { 
+    from { background-position:0 0,0 0,0 0; } 
+    to { background-position:-2000px -1200px,1000px -800,-1500px 1200px; } 
+}
+
+@keyframes float {0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);} }
+.float { animation: float 6s ease-in-out infinite alternate; } 
+
+.glass-card {
+    backdrop-filter: blur(18px);
+    background: rgba(16,18,26,0.85);
+    border-radius: 1.8rem;
+    padding: 3rem;
+    max-width: 800px;
+    margin: 0 auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Center all content */
+    gap: 3rem;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    animation: floatCard 6s ease-in-out infinite;
+}
+
+@keyframes floatCard {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-10px); }
+}
+
+.profile-img {
+    width: 160px; height: 160px;
+    border-radius: 50%;
+    border: 3px solid #0ea5e9;
+    object-fit: cover;
+    box-shadow: 0 0 20px rgba(14,165,233,0.5);
+    animation: glowPulse 4s infinite alternate;
+}
+
+@keyframes glowPulse {
+    from { box-shadow: 0 0 15px #0ea5e9, 0 0 25px rgba(14,165,233,0.6); }
+    to { box-shadow: 0 0 25px #8b5cf6, 0 0 40px rgba(139,92,246,0.6); }
+}
+
+h1.page-title { /* Renamed to avoid conflict */
+    font-family: 'Unbounded', cursive;
+    font-size: 3rem;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 2rem;
+    background: linear-gradient(to right, #0ea5e9, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent; /* Fallback for browsers without -webkit-text-fill-color */
+}
+
+.section-title {
+    font-weight: 700;
+    font-size: 1.25rem;
+    background: linear-gradient(to right, #0ea5e9, #3b82f6, #8b5cf6);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    color: transparent;
+    margin-bottom: 1rem;
+}
+
+.tag {
+    padding: 0.5rem 1rem;
+    border-radius: 0.75rem;
+    background: rgba(59,130,246,0.15);
+    border: 1px solid rgba(59,130,246,0.4);
+    color: #93c5fd;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    cursor: default;
+}
+.tag:hover { background: rgba(59,130,246,0.35); }
+
+footer {
+    margin-top: 3rem;
+    padding: 1rem;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    text-align: center;
+    color: #94a3b8;
+    font-size: 0.9rem;
+}
+footer a {
+    color: #38bdf8;
+    transition: 0.3s;
+}
+footer a:hover {
+    color: #8b5cf6;
+    text-shadow: 0 0 5px #8b5cf6, 0 0 10px #8b5cf6;
+}
+</style>
+</head>
+<body class="p-8 pt-24 float">
+
+<div class="stars-container"></div>
+
+
+
+<h1 class="page-title text-5xl font-unbounded font-extrabold text-center mb-8 bg-gradient-to-r from-cyan-400 via-sky-500 to-blue-500 text-transparent bg-clip-text">
+    Your Flicksy Profile
+</h1>
+
+<div class="glass-card">
+    <div class="flex flex-col items-center text-center space-y-4">
+    {% if current_user.profile_pic %}
+        <img id="profilePic" src="{{ url_for('static', filename=current_user.profile_pic) }}" alt="Profile Picture" class="profile-img">
+    {% else %}
+        <img id="profilePic" src="{{ url_for('static', filename='images/default_avatar.png') }}" alt="Profile Picture" class="profile-img">
+    {% endif %}
+
+        
+        <div class="text-white">
+           <h2 id="profileName" class="text-3xl font-semibold">{{ current_user.full_name }}</h2>
+            <p id="profileAgeEmail" class="text-gray-400 text-lg mt-1">
+                Age: {{ current_user.age }} | {{ current_user.email }}
+            </p>
+        </div>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8 text-center w-full">
+        <div>
+            <div class="section-title">Languages</div>
+            <div id="profileLanguages" class="flex flex-wrap gap-2 justify-center">
+                {% for lang in current_user.preferred_languages.split(',') %}
+                    <span class="tag">{{ lang.strip() }}</span>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div>
+            <div class="section-title">Streaming Platforms</div>
+            <div id="profilePlatforms" class="flex flex-wrap gap-2 justify-center">
+                {% for platform in current_user.streaming_platforms.split(',') %}
+                    <span class="tag">{{ platform.strip() }}</span>
+                {% endfor %}
+            </div>
+        </div>
+        
+        <div>
+            <div class="section-title">Favorite Genres</div>
+            <div id="profileGenres" class="flex flex-wrap gap-2 justify-center">
+                {% for genre in current_user.preferred_genres.split(',') %}
+                    <span class="tag">{{ genre.strip() }}</span>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<footer>
+    © 2025 Flicksy • 
+    <a href="{{ url_for('logout') }}">Logout</a>
+</footer>
+
+</body>
+</html>

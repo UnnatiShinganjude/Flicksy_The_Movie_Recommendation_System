@@ -1,0 +1,959 @@
+
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Hero — Find Movies</title>
+
+  <!-- Tailwind CDN for quick prototyping -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    body {
+      background: radial-gradient(circle at top left, rgba(168, 85, 247, 0.15), transparent 25%),
+                  radial-gradient(circle at bottom right, rgba(34, 211, 238, 0.1), #1a0026 70%);
+      min-height: 100vh;
+      color: #eee;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+      overflow-x: hidden;
+    }
+
+    /* Softer glow on headings */
+    .hero-heading span {
+      text-shadow: 0 3px 10px rgba(0, 0, 0, 0.4);
+    }
+
+    /* Video background styling */
+    #bgVideo {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100vw;
+      height: 100vh;
+      object-fit: cover;
+      z-index: -10;
+      display: none;
+       position: fixed;
+    top: 0; left: 0;
+    width: 100vw;
+    height: 100vh;
+    object-fit: cover;
+    z-index: -10;
+    display: none;
+
+    filter: blur(8px);
+    transform: scale(1.05);
+
+    }
+
+    /* Container that slides up */
+    #main-container {
+      transition: transform 1s ease;
+      transform: translateY(0);
+      position: relative;
+      z-index: 10;
+    }
+
+    /* Slide main container up to reveal quiz */
+    #main-container.slide-up {
+      transform: translateY(-100vh);
+    }
+
+    /* Quiz section full screen and hidden initially */
+    #quiz-section {
+      position: fixed;
+      top: 100vh;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      color: white;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-size: 2rem;
+      z-index: 20;
+      background: transparent;
+      transition: top 1s ease;
+      padding: 2rem;
+      text-align: center;
+    }
+
+    /* Quiz visible on top */
+    #quiz-section.active {
+      top: 0;
+      background: rgba(0, 0, 0, 0.6); /* translucent overlay on video */
+    }
+
+
+
+
+.face-card {
+      user-select: none;
+      background-color: #fde68a; /* initial yellow */
+      width: 400px;
+      border-radius: 1rem;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.3);
+      padding: 2rem;
+      transition: background-color 0.5s ease;
+      text-align: center;
+    }
+    .face-text {
+      font-weight: 700;
+      font-size: 2.25rem;
+      opacity: 0.9;
+      margin-bottom: 1.5rem;
+    }
+    .eyes {
+      display: flex;
+      justify-content: center;
+      gap: 3rem;
+      margin-bottom: 3rem;
+    }
+    .eye {
+      width: 80px;
+      height: 80px;
+      background: white;
+      border-radius: 50%;
+      box-shadow: inset 0 6px 12px rgba(0,0,0,0.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+    .pupil {
+      width: 32px;
+      height: 32px;
+      background: black;
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.4);
+      transition: transform 0.2s ease;
+      position: relative;
+    }
+    .mouth {
+      width: 96px;
+      height: 36px;
+      margin: 0 auto 3rem auto;
+      border-bottom: 8px solid white;
+      border-radius: 0;
+      background: transparent;
+      transition:
+        border-radius 0.4s ease,
+        border-color 0.4s ease,
+        transform 0.4s ease;
+    }
+    /* Sad mouth: frown curve */
+    .mouth.sad {
+      border-bottom-color: #3b82f6; /* blue-500 */
+      border-radius: 0 0 48px 48px / 0 0 24px 24px;
+      transform: rotate(180deg);
+    }
+    /* Normal mouth: straight white line */
+    .mouth.normal {
+      border-bottom-color: white;
+      border-radius: 0;
+      transform: rotate(0deg);
+    }
+    /* Happy mouth: smile curve */
+    .mouth.happy {
+      border-bottom-color: #a3e635; /* green-400 */
+      border-radius: 0 0 48px 48px / 0 0 24px 24px;
+      transform: rotate(0deg);
+    }
+
+    .slider-container {
+      background: white;
+      border-radius: 0 0 1rem 1rem;
+      padding: 1.5rem 2rem;
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      box-sizing: border-box;
+    }
+    .slider {
+     appearance: none;
+-moz-appearance: none;    /* Firefox */
+-webkit-appearance: none; /* Safari, Chrome */
+
+      width: 100%;
+      height: 18px;
+      border-radius: 10px;
+      background: #ddd;
+      outline: none;
+      cursor: pointer;
+      position: relative;
+    }
+    .slider::-webkit-slider-runnable-track {
+      height: 18px;
+      border-radius: 10px;
+      background: #ddd;
+    }
+    .slider::-moz-range-track {
+      height: 18px;
+      border-radius: 10px;
+      background: #ddd;
+    }
+    .slider::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      appearance: none;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #f59e0b;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      border: 2px solid #d97706;
+      margin-top: -7px;
+      transition: background 0.3s ease;
+    }
+    .slider::-moz-range-thumb {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: #f59e0b;
+      cursor: pointer;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+      border: 2px solid #d97706;
+      transition: background 0.3s ease;
+    }
+    .slider:active::-webkit-slider-thumb {
+      background: #b45309;
+    }
+    .slider:active::-moz-range-thumb {
+      background: #b45309;
+    }
+
+.fade-out {
+  opacity: 0;
+  transform: translateY(-10px);
+  transition: opacity 0.6s ease, transform 0.6s ease;
+}
+
+.hidden {
+  display: none;
+}
+
+.glass-box {
+  background: rgba(255, 255, 255, 0.15);      /* semi-transparent white */
+  backdrop-filter: blur(10px);                 /* blur behind */
+  -webkit-backdrop-filter: blur(10px);         /* Safari support */
+  border: 1px solid rgba(255, 255, 255, 0.3);  /* light border */
+  border-radius: 1rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  max-width: 400px;
+  color: white;
+  margin: 2rem auto;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  text-align: center;
+}
+
+
+ .glass-card {
+    background: rgba(55, 0, 125, 0.3);
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+    border-radius: 1rem;
+    box-shadow: 0 0 40px rgba(124, 58, 237, 0.5);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    font-family: 'Poppins', sans-serif;
+    color: #e0d7ff;
+  }
+
+  /* Genre list & items */
+  #genre-list {
+    padding: 0;
+    margin: 0;
+  }
+  .genre-item {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 100px;
+    user-select: none;
+    border-radius: 1rem;
+    padding: 0.5rem;
+    border: 2px solid transparent;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  }
+  .genre-item:hover,
+  .genre-item:focus {
+    outline: none;
+    border-color: #a78bfa;
+    box-shadow: 0 0 10px #a78bfa;
+  }
+
+  /* Selected genre styling */
+  .genre-item.selected {
+    border-color: #7c3aed;
+    box-shadow: 0 0 20px #7c3aed;
+  }
+
+  /* Genre images */
+  .genre-img {
+    width: 80px;
+    height: 80px;
+    border-radius: 0.75rem;
+    object-fit: cover;
+    margin-bottom: 0.5rem;
+    filter: drop-shadow(0 0 3px rgba(0,0,0,0.5));
+    transition: transform 0.2s ease;
+  }
+  .genre-item:hover .genre-img,
+  .genre-item.selected .genre-img {
+    transform: scale(1.05);
+  }
+
+  /* Genre label */
+  .genre-label {
+    font-weight: 600;
+    font-size: 1rem;
+    text-align: center;
+  }
+
+  /* Submit button */
+  .submit-btn {
+    background: rgba(255, 255, 255, 0.15);
+    color: #e0d7ff;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 0.85rem 3rem;
+    border-radius: 1.25rem;
+    border: 2px solid #a78bfa;
+    backdrop-filter: blur(12px);
+    box-shadow:
+      0 0 10px #a78bfa,
+      0 0 20px #7c3aed;
+    cursor: pointer;
+    transition:
+      background 0.3s ease,
+      color 0.3s ease,
+      box-shadow 0.3s ease,
+      transform 0.2s ease;
+    user-select: none;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-top: 1.5rem;
+  }
+  .submit-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: #fff;
+    box-shadow:
+      0 0 15px #a78bfa,
+      0 0 30px #7c3aed,
+      0 0 50px #7c3aed;
+    transform: scale(1.1);
+  }
+  .submit-btn:active {
+    transform: scale(0.95);
+    box-shadow:
+      0 0 7px #a78bfa,
+      0 0 15px #7c3aed;
+  }
+
+    
+.year-item.selected {
+  background-color: #d97706; /* darker yellow */
+  color: #1f2937; /* dark text */
+  font-weight: 700;
+  box-shadow: 0 0 15px #d97706;
+  outline: none;
+}
+
+.year-item:focus {
+  outline: 2px solid #fbbf24; /* yellow-400 */
+  outline-offset: 2px;
+}
+
+.year-item {
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+}
+
+.year-item:hover {
+  background-color: rgba(245, 158, 11, 0.8); /* lighter yellow */
+  box-shadow: 0 0 12px #f59e0b;
+  transform: scale(1.05);
+}
+
+/* Containers should smoothly fade */
+
+
+
+#submitYear {
+    background: rgba(255, 255, 255, 0.15);
+    color: #e0d7ff;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 0.85rem 3rem;
+    border-radius: 1.25rem;
+    border: 2px solid #a78bfa;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 10px #a78bfa, 0 0 20px #7c3aed;
+    cursor: pointer;
+    transition: background 0.3s ease, color 0.3s ease, box-shadow 0.3s ease, transform 0.2s ease;
+    user-select: none;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-top: 1.5rem;
+    width: 100%;
+}
+
+#submitYear:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: #fff;
+    box-shadow: 0 0 15px #a78bfa, 0 0 30px #7c3aed, 0 0 50px #7c3aed;
+    transform: scale(1.1);
+}
+
+#submitYear:active {
+    transform: scale(0.95);
+    box-shadow: 0 0 7px #a78bfa, 0 0 15px #7c3aed;
+}
+
+
+.option {
+  cursor: pointer;
+  background: rgba(128, 0, 255, 0.4);
+  border-radius: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-weight: 600;
+  transition: 0.3s;
+}
+.option:hover {
+  background: rgba(128, 0, 255, 0.6);
+}
+
+.submit-btn {
+    background: rgba(255, 255, 255, 0.15);
+    color: #e0d7ff;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 1.1rem;
+    padding: 0.85rem 3rem;
+    border-radius: 1.25rem;
+    border: 2px solid #a78bfa;
+    backdrop-filter: blur(12px);
+    box-shadow: 0 0 10px #a78bfa, 0 0 20px #7c3aed;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    text-transform: uppercase;
+    letter-spacing: 1.2px;
+    margin-top: 1.5rem;
+    width: 100%;
+}
+.submit-btn:hover {
+    background: rgba(255, 255, 255, 0.3);
+    color: #fff;
+    box-shadow: 0 0 15px #a78bfa, 0 0 30px #7c3aed, 0 0 50px #7c3aed;
+    transform: scale(1.1);
+}
+.submit-btn:active {
+    transform: scale(0.95);
+    box-shadow: 0 0 7px #a78bfa, 0 0 15px #7c3aed;
+}
+
+.fade-out {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.fade-in {
+  opacity: 0;
+  transition: opacity 0.5s ease;
+}
+.fade-in.show {
+  opacity: 1;
+}
+
+/* Common selected state for all question options */
+.year-item.selected,
+.watching-item:focus,
+.language-item.selected,
+.platform-item.selected {
+  background-color: #d97706; /* darker yellow */
+  color: #1f2937; /* dark text */
+  font-weight: 700;
+  box-shadow: 0 0 15px #d97706;
+  outline: none;
+}
+
+/* Common focus style */
+.year-item:focus,
+.watching-item:focus, 
+.language-item:focus,
+.platform-item:focus {
+  outline: 2px solid #fbbf24; /* yellow-400 */
+  outline-offset: 2px;
+}
+
+/* Common base state */
+.year-item, 
+.genre-item,
+.watching-item,
+.language-item,
+.platform-item {
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+}
+
+/* Common hover state */
+.year-item:hover,
+.watching-item:hover,
+.language-item:hover,
+.platform-item:hover {
+  background-color: rgba(245, 158, 11, 0.8); /* lighter yellow */
+  box-shadow: 0 0 12px #f59e0b;
+  transform: scale(1.05);
+}
+
+
+
+/* Selected option style (Yellow) */
+.option.selected {
+  background-color: #d97706; /* darker yellow */
+  color: #1f2937; /* dark text */
+  font-weight: 700;
+  box-shadow: 0 0 15px #d97706;
+  outline: none;
+}
+
+/* Focus outline */
+.option:focus {
+  outline: 2px solid #fbbf24; /* yellow-400 */
+  outline-offset: 2px;
+}
+
+/* Base state */
+.option {
+  transition: background-color 0.3s ease, box-shadow 0.3s ease, transform 0.3s ease;
+  cursor: pointer;
+  padding: 0.5rem 1rem;
+  border-radius: 0.5rem;
+}
+
+/* Hover state */
+.option:hover {
+  background-color: rgba(245, 158, 11, 0.8); /* lighter yellow */
+  box-shadow: 0 0 12px #f59e0b;
+  transform: scale(1.05);
+}
+
+
+
+  </style>
+</head>
+<body>
+
+  <!-- Background Video -->
+  <video autoplay muted loop playsinline id="bgVideo" preload="auto">
+    <source src="{{ url_for('static', filename='videos/v1.mp4') }}" type="video/webm" />
+    
+</video>
+
+  <!-- Wrap all main content to slide -->
+  <div id="main-container">
+
+    <!-- Header -->
+ <main class="flex items-center justify-center text-center px-6 min-h-screen">
+      <section class="w-full max-w-5xl py-24">
+        <!-- small badge -->
+        <div class="mb-6 flex justify-center">
+          <div class="bg-yellow-700/20 text-yellow-300 px-3 py-1 rounded-full text-xs font-medium">
+            Feeling Bored?
+          </div>
+        </div>
+
+        <!-- headline -->
+        <h1 class="hero-heading leading-tight font-extrabold text-center text-[clamp(2.2rem,6vw,5rem)]">
+          <span class="block text-yellow-400">Find Movies</span>
+          <span class="block text-white mt-1">That Match Your</span>
+          <span class="block text-yellow-400">Current Mood</span>
+        </h1>
+
+        <!-- subtitle -->
+        <p class="mt-6 text-gray-300 max-w-2xl mx-auto text-lg">
+          Stop endless scrolling through streaming platforms. Our recommends movies you'll actually enjoy watching right now.
+        </p>
+
+        <!-- CTA -->
+        <div class="mt-8 flex items-center justify-center gap-4">
+          <a href="#" id="start-quiz-btn" class="inline-flex items-center gap-3 bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-full shadow-lg hover:scale-[1.01] transition cursor-pointer">
+            Start Movie Quiz
+          </a>
+
+          <span class="text-sm text-gray-400">• Free • Takes a minute </span>
+        </div>
+
+        <!-- small icons row -->
+        <div class="mt-12 flex items-center justify-center gap-6 text-sm text-gray-200">
+          <div class="flex items-center gap-2">
+            <div class="w-10 h-10 rounded-lg bg-yellow-700/20 flex items-center justify-center">🎬</div>
+            <div class="text-left">
+              <div class="font-medium text-white">Movies</div>
+              <div class="text-xs text-gray-400">All platforms</div>
+            </div>
+          </div>
+
+         
+
+          <div class="flex items-center gap-2">
+            <div class="w-10 h-10 rounded-lg bg-white/5 flex items-center justify-center">⭐</div>
+            <div class="text-left">
+              <div class="font-medium text-white">Top Rated</div>
+              <div class="text-xs text-gray-400">Critics & users</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+ <!-- -------------------------------------------------------------------------------------------------------------------------------------->
+  <section id="quiz-section" class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 flex flex-col justify-center items-center p-8 text-white z-20">
+
+  <!-- Quiz Intro -->
+
+    <div id="mood-question-container" class="hidden flex flex-col items-center max-w-2xl mx-auto">
+    
+    <h2 class="text-4xl font-semibold mb-2">Lights, Camera, Quiz! 🎥</h2>
+    
+    <p class="text-lg mb-8">Here is where your quiz content will go.</p>
+    <p class="text-lg mb-8 text-gray-300">First, tell us how you're feeling.</p>
+    <div class="face-card" id="faceCard">
+        <div class="face-text" id="face-label">Normal</div>
+        <div class="face">
+            <div class="eyes">
+                <div class="eye"><div class="pupil"></div></div>
+                <div class="eye"><div class="pupil"></div></div>
+            </div>
+            <div id="mouth" class="mouth normal"></div>
+        </div>
+        <div class="slider-container">
+            <input type="range" min="0" max="10" value="5" step="1" class="slider" id="faceRange" />
+        </div>
+        <button id="submit-mood-btn" class="bg-yellow-400 text-gray-900 font-semibold px-6 py-3 rounded-full shadow-lg hover:scale-[1.01] transition cursor-pointer mt-4">Submit</button>
+    </div>
+
+</div>
+
+<!-- Next question container (hidden initially) 
+<div id="next-question-" class="hidden">-->
+  <div id="next-question-container" class="hidden glass-card p-6 max-w-md mx-auto rounded-xl mt-6 text-white">
+  <h2 class="text-2xl font-semibold mb-6 text-center">Select Your Preferred Genres</h2>
+  
+  <form id="genre-form">
+    <ul id="genre-list" class="flex flex-wrap justify-center gap-6 p-0 list-none">
+      <li class="genre-item" data-genre="Action" tabindex="0" role="checkbox" aria-checked="false">
+        <img src="https://images.unsplash.com/photo-1575919220112-0d5a2dc6a4b6?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8QWN0aW9uJTIwbW92aWV8ZW58MHx8MHx8fDA%3D" alt="Action" class="genre-img" />
+        <span class="genre-label">Action</span>
+      </li>
+      <li class="genre-item" data-genre="Comedy" tabindex="0" role="checkbox" aria-checked="false">
+        <img src="https://plus.unsplash.com/premium_photo-1683740128939-332a77523d51?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MXx8Q29tZWR5JTIwbW92aWV8ZW58MHx8MHx8fDA%3D" alt="Comedy" class="genre-img" />
+        <span class="genre-label">Comedy</span>
+      </li>
+      <li class="genre-item" data-genre="Drama" tabindex="0" role="checkbox" aria-checked="false">
+        <img src="https://images.unsplash.com/photo-1616530940355-351fabd9524b?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8MTF8fG1vdmllfGVufDB8fDB8fHww" alt="Drama" class="genre-img" />
+        <span class="genre-label">Drama</span>
+      </li>
+      <li class="genre-item" data-genre="Horror" tabindex="0" role="checkbox" aria-checked="false">
+        <img src="https://plus.unsplash.com/premium_photo-1678990345517-824bca693745?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NXx8c2klMjBmaXxlbnwwfHwwfHx8MA%3D%3D" alt="Sci-Fi" class="genre-img" />
+        <span class="genre-label">Horror</span>
+      </li>
+      <li class="genre-item" data-genre="Romance" tabindex="0" role="checkbox" aria-checked="false">
+        <img src="https://images.unsplash.com/photo-1474552226712-ac0f0961a954?w=600&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8NHx8Um9tYW5jZXxlbnwwfHwwfHx8MA%3D%3D" alt="Romance" class="genre-img" />
+        <span class="genre-label">Romance</span>
+      </li>
+    </ul>
+
+    <button type="submit" class="submit-btn mt-6 mx-auto block">
+      Submit Genres
+    </button>
+  </form>
+</div>
+
+
+<div id="year-question-container" class="hidden glass-card p-6 max-w-md mx-auto rounded-xl mt-6 text-white">
+  <h2 class="text-2xl font-semibold mb-4 text-center">Which Year Do You Prefer?</h2>
+  
+  <ul id="year-list" class="flex flex-wrap gap-4 justify-center">
+    <li tabindex="0" role="radio" aria-checked="false" class="year-item cursor-pointer bg-purple-600 bg-opacity-40 hover:bg-purple-700 rounded-lg px-5 py-3 text-lg font-semibold transition select-none">
+      2020s (2020 - Present)
+    </li>
+    <li tabindex="0" role="radio" aria-checked="false" class="year-item cursor-pointer bg-purple-600 bg-opacity-40 hover:bg-purple-700 rounded-lg px-5 py-3 text-lg font-semibold transition select-none">
+      2010s (2010 - 2019)
+    </li>
+    <li tabindex="0" role="radio" aria-checked="false" class="year-item cursor-pointer bg-purple-600 bg-opacity-40 hover:bg-purple-700 rounded-lg px-5 py-3 text-lg font-semibold transition select-none">
+      2000s (2000 - 2009)
+    </li>
+    <li tabindex="0" role="radio" aria-checked="false" class="year-item cursor-pointer bg-purple-600 bg-opacity-40 hover:bg-purple-700 rounded-lg px-5 py-3 text-lg font-semibold transition select-none">
+      1990s (1990 - 1999)
+    </li>
+  </ul>
+  <button id="submitYear" class="submit-btn w-full">Submit Year</button>
+</div>
+
+
+<!-- Where / With Whom Question -->
+<div id="watching-question-container" class="hidden glass-card p-6 max-w-md mx-auto rounded-xl mt-6 text-white">
+  <h2 class="text-2xl font-semibold mb-4 text-center">Where / With Whom Are You Watching?</h2>
+  
+  <ul id="watching-list" class="flex flex-wrap gap-4 justify-center">
+    <li tabindex="0" role="radio" aria-checked="false" class="watching-item cursor-pointer bg-gradient-to-r from-pink-500/50 via-purple-500/50 to-indigo-500/50 hover:from-pink-500 hover:via-purple-500 hover:to-indigo-500 rounded-lg px-5 py-3 text-lg font-semibold transition select-none">
+      Alone
+    </li>
+    <li tabindex="0" role="radio" aria-checked="false" class="watching-item cursor-pointer bg-gradient-to-r from-yellow-500/50 via-orange-500/50 to-red-500/50 hover:from-yellow-500 hover:via-orange-500 hover:to-red-500 rounded-lg px-5 py-3 text-lg font-semibold transition select-none">
+      With Family
+    </li>
+    <li tabindex="0" role="radio" aria-checked="false" class="watching-item cursor-pointer bg-gradient-to-r from-green-500/50 via-emerald-500/50 to-teal-500/50 hover:from-green-500 hover:via-emerald-500 hover:to-teal-500 rounded-lg px-5 py-3 text-lg font-semibold transition select-none">
+      With Friends
+    </li>
+    <li tabindex="0" role="radio" aria-checked="false" class="watching-item cursor-pointer bg-gradient-to-r from-blue-500/50 via-sky-500/50 to-cyan-500/50 hover:from-blue-500 hover:via-sky-500 hover:to-cyan-500 rounded-lg px-5 py-3 text-lg font-semibold transition select-none">
+      With Partner
+    </li>
+  </ul>
+
+  <button id="submitWatching" class="submit-btn w-full">Submit</button>
+</div>
+
+
+
+
+<!-- Q3: Language -->
+<div id="language-question-container" class="hidden glass-card p-6 max-w-md mx-auto rounded-xl mt-6 text-white">
+  <h2 class="text-2xl font-semibold mb-4 text-center">Which Language Do You Prefer?</h2>
+  <ul class="flex flex-wrap gap-4 justify-center">
+    <li class="option">English</li>
+    <li class="option">Hindi</li>
+    <li class="option">Marathi</li> 
+    <li class="option">Korean</li>
+    <li class="option">Tamil</li>
+    <li class="option">Telugu</li>
+    <li class="option">Japanese</li>
+    <li class="option">Other</li>
+  </ul>
+  <button id="submitLanguage" class="submit-btn w-full">Submit</button>
+</div>
+
+
+<!-- Q4: Streaming Platform -->
+<div id="platform-question-container" class="hidden glass-card p-6 max-w-md mx-auto rounded-xl mt-6 text-white">
+  <h2 class="text-2xl font-semibold mb-4 text-center">Choose a Streaming Platform</h2>
+  <ul class="flex flex-wrap gap-4 justify-center">
+    <li class="option">Netflix</li>
+    <li class="option">Amazon Prime</li>
+    <li class="option">Disney+ Hotstar</li>
+    <li class="option">All</li>
+  </ul>
+  <button id="submitPlatform" class="submit-btn w-full">Finish</button>
+</div>
+
+
+
+</section>
+
+<section id="results-section" class="hidden fixed top-0 left-0 w-full h-full bg-black bg-opacity-70 flex flex-col justify-center items-center p-8 text-white z-30">
+    <div class="container mx-auto text-center">
+        <h2 class="text-3xl font-bold mb-6">Here are your movie recommendations!</h2>
+        <div id="results-grid" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6">
+            </div>
+        <button id="restart-quiz-btn" class="submit-btn mt-8">Start Over</button>
+    </div>
+</section>
+
+
+ <script>
+document.addEventListener('DOMContentLoaded', () => {
+    // --- Object to store all quiz answers ---
+    const quizAnswers = {};
+
+    // --- Get all HTML elements ---
+    const startQuizBtn = document.getElementById('start-quiz-btn');
+    const mainContainer = document.getElementById('main-container');
+    const quizSection = document.getElementById('quiz-section');
+    const bgVideo = document.getElementById('bgVideo');
+    
+    // --- All your quiz question containers ---
+    const moodQuestionContainer = document.getElementById('mood-question-container'); 
+    const faceCard = document.getElementById('faceCard');
+    const genreContainer = document.getElementById('next-question-container');
+    const yearContainer = document.getElementById('year-question-container');
+    const watchingContainer = document.getElementById('watching-question-container');
+    const languageContainer = document.getElementById('language-question-container');
+    const platformContainer = document.getElementById('platform-question-container');
+    const resultsSection = document.getElementById('results-section');
+    const resultsGrid = document.getElementById('results-grid');
+
+    // --- Face slider elements ---
+    const faceRange = document.getElementById('faceRange');
+    const faceLabel = document.getElementById('face-label');
+    const mouth = document.getElementById('mouth');
+
+    // --- All Submit buttons ---
+    const submitMoodBtn = document.getElementById('submit-mood-btn');
+    const genreForm = document.getElementById('genre-form');
+    const submitYearBtn = document.getElementById('submitYear');
+    const submitWatchingBtn = document.getElementById('submitWatching');
+    const submitLanguageBtn = document.getElementById('submitLanguage');
+    const submitPlatformBtn = document.getElementById('submitPlatform');
+    const restartQuizBtn = document.getElementById('restart-quiz-btn');
+
+    // --- Function to smoothly show the next question ---
+    function showNext(currentContainer, nextContainer) {
+        if (!currentContainer || !nextContainer) return;
+        currentContainer.classList.add("fade-out");
+        setTimeout(() => {
+            currentContainer.classList.add("hidden");
+            currentContainer.classList.remove("fade-out", "fade-in", "show");
+            nextContainer.classList.remove("hidden");
+            setTimeout(() => nextContainer.classList.add("fade-in", "show"), 50);
+        }, 500);
+    }
+
+    // --- Function to handle selecting ONE option from a list ---
+    function setupSingleSelection(container, itemClass) {
+        if (!container) return;
+        const items = container.querySelectorAll(`.${itemClass}`);
+        items.forEach(item => {
+            item.addEventListener('click', () => {
+                items.forEach(i => i.classList.remove('selected'));
+                item.classList.add('selected');
+            });
+        });
+    }
+
+    setupSingleSelection(yearContainer, 'year-item');
+    setupSingleSelection(watchingContainer, 'watching-item');
+    setupSingleSelection(languageContainer, 'option');
+    setupSingleSelection(platformContainer, 'option');
+
+    // --- START THE QUIZ ---
+    // **CORRECTED PART 1**
+    startQuizBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        bgVideo.style.display = 'block';
+        bgVideo.play().catch(error => console.log("Video autoplay prevented:", error));
+        mainContainer.classList.add('slide-up');
+        quizSection.classList.remove('hidden');
+        quizSection.classList.add('active');
+        moodQuestionContainer.classList.remove('hidden');
+        moodQuestionContainer.classList.add('fade-in', 'show');
+    });
+
+    // --- QUESTION 1: Mood ---
+    faceRange.addEventListener('input', () => {
+        const value = parseInt(faceRange.value, 10);
+        if (value < 4) {
+            mouth.className = 'mouth sad'; faceLabel.textContent = 'Sad';
+            faceCard.style.backgroundColor = '#ef4444'; // Blue
+        } else if (value > 6) {
+            mouth.className = 'mouth happy'; faceLabel.textContent = 'Happy';
+            faceCard.style.backgroundColor = '#4ade80'; // Green
+        } else {
+            mouth.className = 'mouth normal'; faceLabel.textContent = 'Normal';
+            faceCard.style.backgroundColor = '#fde68a'; // Yellow
+        }
+    });
+    
+    // **CORRECTED PART 2**
+    submitMoodBtn.addEventListener('click', () => {
+        quizAnswers.mood = faceLabel.textContent;
+        console.log("Answers:", quizAnswers);
+        showNext(moodQuestionContainer, genreContainer);
+    });
+
+    // --- QUESTION 2: Genres (allows multiple selections) ---
+    document.querySelectorAll('.genre-item').forEach(item => {
+        item.addEventListener('click', () => {
+            item.classList.toggle('selected');
+        });
+    });
+    genreForm.addEventListener('submit', (e) => {
+        e.preventDefault();
+        const selected = [...genreContainer.querySelectorAll('.genre-item.selected')];
+        if (selected.length === 0) {
+            alert('Please select at least one genre.');
+            return;
+        }
+        quizAnswers.genres = selected.map(item => item.dataset.genre);
+        console.log("Answers:", quizAnswers);
+        showNext(genreContainer, yearContainer);
+    });
+
+    // --- QUESTION 3: Year ---
+    submitYearBtn.addEventListener('click', () => {
+        const selected = yearContainer.querySelector('.year-item.selected');
+        if (!selected) { alert('Please select a time period.'); return; }
+        quizAnswers.year = selected.textContent.trim();
+        console.log("Answers:", quizAnswers);
+        showNext(yearContainer, watchingContainer);
+    });
+
+    // --- QUESTION 4: Watching With ---
+    submitWatchingBtn.addEventListener('click', () => {
+        const selected = watchingContainer.querySelector('.watching-item.selected');
+        if (!selected) { alert('Please select who you are watching with.'); return; }
+        quizAnswers.with_whom = selected.textContent.trim();
+        console.log("Answers:", quizAnswers);
+        showNext(watchingContainer, languageContainer);
+    });
+
+    // --- QUESTION 5: Language ---
+    submitLanguageBtn.addEventListener('click', () => {
+        const selected = languageContainer.querySelector('.option.selected');
+        if (!selected) { alert('Please select a language.'); return; }
+        quizAnswers.language = selected.textContent.trim();
+        console.log("Answers:", quizAnswers);
+        showNext(languageContainer, platformContainer);
+    });
+
+    // --- QUESTION 6: Platform & FINISH QUIZ ---
+    submitPlatformBtn.addEventListener('click', () => {
+        const selected = platformContainer.querySelector('.option.selected');
+        if (!selected) { alert('Please select a platform.'); return; }
+        quizAnswers.platform = selected.textContent.trim();
+        console.log("Final Answers:", quizAnswers);
+
+        quizSection.classList.remove('active');
+        resultsSection.classList.remove('hidden');
+        resultsGrid.innerHTML = `<p class="col-span-full text-gray-400">Fetching movie recommendations...</p>`;
+
+        // This is where you would send the `quizAnswers` object to your backend
+        fetch('/mood-recommendations', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(quizAnswers),
+        })
+        .then(response => {
+            if (!response.ok) { throw new Error('Network response was not ok'); }
+            return response.json();
+        })
+        .then(movies => {
+            resultsGrid.innerHTML = '';
+            if (movies.length === 0) {
+                resultsGrid.innerHTML = `<p class="col-span-full text-gray-400">Sorry, no movies found matching your criteria. Try again!</p>`;
+            } else {
+                movies.forEach(movie => {
+                    const movieCard = `
+                        <a href="/movie/${movie.tmdb_id}" class="text-center group">
+                        <img src="${movie.poster_path}" alt="${movie.title}" class="rounded-lg shadow-lg w-full h-auto object-cover transition transform group-hover:scale-105">
+                        <p class="mt-2 font-semibold text-sm truncate group-hover:text-yellow-400">${movie.title}</p>
+                        </a>`;
+                    resultsGrid.innerHTML += movieCard;
+                });
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching recommendations:', error);
+            resultsGrid.innerHTML = `<p class="col-span-full text-red-400">Could not fetch recommendations. Please try again later.</p>`;
+        });
+    });
+    
+    // --- RESTART QUIZ ---
+    restartQuizBtn.addEventListener('click', () => {
+        window.location.reload();
+    });
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Flicksy — {{ person.name }}</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+
+<style>
+/* General Body & Background Styling */
+body {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    margin: 0; padding: 0;
+    min-height: 100vh;
+    background-color: #000;
+    color: #e6ebf3;
+    overflow-x: hidden;
+    position: relative;
+}
+
+.stars-container, .stars-container::before, .stars-container::after {
+    position: fixed; top:0; left:0; width:100%; height:100%; content:""; pointer-events:none; background-repeat:repeat;
+    z-index: -1;
+}
+
+.stars-container { 
+    background-image: radial-gradient(3px 3px at 20px 30px, rgba(255,255,255,1) 50%, transparent 51%),
+                      radial-gradient(2px 2px at 120px 80px, rgba(255,255,255,.8) 50%, transparent 51%),
+                      radial-gradient(4px 4px at 300px 200px, rgba(255,255,255,.6) 50%, transparent 51%),
+                      radial-gradient(2px 2px at 500px 450px, rgba(255,255,255,.9) 50%, transparent 51%),
+                      radial-gradient(3px 3px at 700px 600px, rgba(255,255,255,.7) 50%, transparent 51%);
+    background-size: 800px 600px;
+    animation: drift 90s linear infinite; 
+}
+
+.stars-container::before { 
+    background-image: radial-gradient(4px 4px at 50px 60px, rgba(255,255,255,.8) 50%, transparent 51%),
+                      radial-gradient(3px 3px at 250px 140px, rgba(255,255,255,.6) 50%, transparent 51%),
+                      radial-gradient(2px 2px at 900px 300px, rgba(255,255,255,.5) 50%, transparent 51%);
+    background-size: 1000px 800px;
+    animation: drift 120s linear infinite reverse; 
+    opacity:.7; 
+}
+
+.stars-container::after { 
+    background-image: radial-gradient(5px 5px at 160px 40px, rgba(255,255,255,.6) 50%, transparent 51%),
+                      radial-gradient(3px 3px at 90px 250px, rgba(255,255,255,.5) 50%, transparent 51%),
+                      radial-gradient(4px 4px at 600px 700px, rgba(255,255,255,.4) 50%, transparent 51%);
+    background-size: 1200px 1000px;
+    animation: drift 150s linear infinite; 
+    opacity:.5; 
+}
+
+@keyframes drift { 
+    from { background-position:0 0; } 
+    to { background-position:-2000px -1200px; } 
+}
+
+/* Card Floating Animation */
+@keyframes floatCard {0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);} }
+
+/* Main Card Container */
+.actor-card-container {
+    backdrop-filter: blur(18px);
+    background: rgba(16,18,26,0.85);
+    border-radius: 1.8rem;
+    padding: 2rem 3rem;
+    max-width: 800px;
+    margin: 0 auto;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.6);
+    border: 1px solid rgba(139, 92, 246, 0.2);
+    animation: floatCard 6s ease-in-out infinite alternate;
+}
+
+/* Titles & Profile Image */
+.actor-title {
+    font-size: 3rem; font-weight: 800; text-align: center;
+    background: linear-gradient(to right, #d946ef, #8b5cf6, #c084fc);
+    -webkit-background-clip: text; background-clip: text;
+    -webkit-text-fill-color: transparent; color: transparent;
+}
+
+.section-title {
+    font-size: 1.2rem; font-weight: 600; color: #e6e8eb;
+    border-left: 3px solid #8b5cf6; padding-left: 0.75rem; margin-bottom: 0.75rem;
+}
+
+.profile-img {
+    width: 150px; height: 150px; border-radius: 50%;
+    border: 2px solid #8b5cf6; object-fit: cover;
+    box-shadow: 0 0 20px rgba(139,92,246,0.5);
+    animation: glowPulse 4s infinite alternate;
+}
+
+@keyframes glowPulse {
+    from { box-shadow: 0 0 15px #d946ef, 0 0 25px rgba(217,70,239,0.6); }
+    to { box-shadow: 0 0 25px #8b5cf6, 0 0 40px rgba(139,92,246,0.6); }
+}
+
+/* Filmography Item */
+.film-item {
+    background-color: rgba(255, 255, 255, 0.05); padding: 0.75rem; border-radius: 0.5rem;
+    display: flex; align-items: center; gap: 0.75rem;
+    transition: background-color 0.2s ease, transform 0.3s ease;
+    border: 1px solid rgba(139,92,246,0.3);
+}
+.film-item:hover {
+    background-color: rgba(139, 92, 246, 0.15); transform: translateY(-3px);
+    box-shadow: 0 5px 15px rgba(139,92,246,0.2);
+}
+.film-item img { width: 50px; height: 75px; object-fit: cover; border-radius: 0.3rem; }
+
+/* Scrollbar Hiding Utility */
+.hide-scrollbar {
+    -ms-overflow-style: none; /* IE and Edge */
+    scrollbar-width: none; /* Firefox */
+}
+.hide-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari and Opera */
+}
+
+/* Photo Gallery & Modal */
+.gallery-img {
+    width: 100%; height: 150px; object-fit: cover; border-radius: 0.5rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3); cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.gallery-img:hover { transform: scale(1.03); box-shadow: 0 0 15px rgba(139,92,246,0.5); }
+
+.modal-overlay {
+    position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+    background: rgba(0, 0, 0, 0.85); backdrop-filter: blur(8px);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 1000; opacity: 0; pointer-events: none;
+    transition: opacity 0.3s ease;
+}
+.modal-overlay.visible { opacity: 1; pointer-events: auto; }
+.modal-content { max-width: 90vw; max-height: 90vh; }
+.modal-content img { width: auto; height: auto; max-width: 100%; max-height: 100%; border-radius: 0.5rem; }
+.modal-close {
+    position: absolute; top: 2rem; right: 2rem; font-size: 2rem;
+    color: white; cursor: pointer; transition: transform 0.2s ease;
+}
+.modal-close:hover { transform: scale(1.2) rotate(90deg); }
+
+/* Footer */
+footer { margin-top: 3rem; padding: 1rem; border-top: 1px solid rgba(255,255,255,0.1);
+    text-align: center; color: #94a3b8; font-size: 0.9rem; }
+footer a { color: #c084fc; transition: 0.3s; }
+footer a:hover { color: #8b5cf6; text-shadow: 0 0 5px #8b5cf6, 0 0 10px #8b5cf6; }
+</style>
+</head>
+
+<body class="p-4 sm:p-8 pt-24">
+    <div class="stars-container"></div>
+    
+    <main class="actor-card-container max-w-4xl mx-auto mt-24">
+        <section class="flex flex-col md:flex-row items-center md:items-start gap-6 text-center md:text-left">
+            <img src="https://image.tmdb.org/t/p/w500/{{ person.profile_path }}" alt="{{ person.name }} Profile" class="profile-img mx-auto md:mx-0">
+            <div>
+                <h2 class="text-3xl lg:text-5xl font-bold actor-title">{{ person.name }}</h2>
+                <p class="text-gray-400 mt-1 text-lg font-semibold">{{ person.known_for_department }}</p>
+                <div class="mt-3 text-gray-300 space-y-1">
+                    {% if person.birthday %}
+                        <p><strong>Born:</strong> {{ person.birthday }}</p>
+                    {% endif %}
+                    {% if person.place_of_birth %}
+                        <p><strong>Place of Birth:</strong> {{ person.place_of_birth }}</p>
+                    {% endif %}
+                </div>
+            </div>
+        </section>
+
+        <section class="mt-8">
+            <h3 class="section-title">Biography</h3>
+            {% if person.biography %}
+                <p class="text-gray-300 leading-relaxed text-sm">{{ person.biography | replace('\n\n', '<br><br>') | safe }}</p>
+            {% else %}
+                <p class="text-gray-400">No biography available for this person.</p>
+            {% endif %}
+        </section>
+        
+        <!-- Known For (Actor) Section -->
+        <section class="mt-8">
+            <h3 class="section-title">Known For (as Actor)</h3>
+            {% if credits and credits.cast %}
+                <div class="flex overflow-x-auto space-x-4 pb-4 mt-3 hide-scrollbar">
+                    {% for credit in credits.cast | sort(attribute='popularity', reverse=true) %}
+                        {% if credit.poster_path %}
+                        <a href="{% if credit.media_type == 'movie' %}{{ url_for('movie_details', movie_id=credit.id) }}{% elif credit.media_type == 'tv' %}{{ url_for('tv_details', tv_id=credit.id) }}{% else %}#{% endif %}" class="film-item flex-shrink-0 w-72 sm:w-80">
+                            <img src="https://image.tmdb.org/t/p/w200/{{ credit.poster_path }}" alt="{{ credit.title or credit.name }} Poster">
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-semibold text-sm truncate">{{ credit.title or credit.name }} <span class="text-gray-400 font-normal">({% if credit.release_date %}{{ credit.release_date.split('-')[0] }}{% elif credit.first_air_date %}{{ credit.first_air_date.split('-')[0] }}{% endif %})</span></h4>
+                                {% if credit.character %}
+                                    <p class="text-xs text-gray-500 truncate">as {{ credit.character }}</p>
+                                {% endif %}
+                            </div>
+                        </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p class="text-gray-400 mt-3">No acting credits were found for this person.</p>
+            {% endif %}
+        </section>
+
+        <!-- Known For (Crew) Section -->
+        <section class="mt-8">
+            <h3 class="section-title">Known For (as Crew)</h3>
+            {% if credits and credits.crew %}
+                <div class="flex overflow-x-auto space-x-4 pb-4 mt-3 hide-scrollbar">
+                     {% for credit in credits.crew | sort(attribute='popularity', reverse=true) %}
+                         {% if credit.poster_path %}
+                         <a href="{% if credit.media_type == 'movie' %}{{ url_for('movie_details', movie_id=credit.id) }}{% elif credit.media_type == 'tv' %}{{ url_for('tv_details', tv_id=credit.id) }}{% else %}#{% endif %}" class="film-item flex-shrink-0 w-72 sm:w-80">
+                            <img src="https://image.tmdb.org/t/p/w200/{{ credit.poster_path }}" alt="{{ credit.title or credit.name }} Poster">
+                            <div class="flex-1 min-w-0">
+                                <h4 class="font-semibold text-sm truncate">{{ credit.title or credit.name }} <span class="text-gray-400 font-normal">({% if credit.release_date %}{{ credit.release_date.split('-')[0] }}{% elif credit.first_air_date %}{{ credit.first_air_date.split('-')[0] }}{% endif %})</span></h4>
+                                {% if credit.job %}
+                                    <p class="text-xs text-gray-500 truncate">{{ credit.job }}</p>
+                                {% endif %}
+                            </div>
+                        </a>
+                        {% endif %}
+                    {% endfor %}
+                </div>
+            {% else %}
+                 <p class="text-gray-400 mt-3">No crew credits were found for this person.</p>
+            {% endif %}
+        </section>
+
+        
+        
+    </main>
+
+    <footer>
+        © 2025 Flicksy • 
+        <a href="#">Contact</a> • 
+        <a href="#">Privacy</a> • 
+        <a href="#">Terms</a>
+    </footer>
+    
+    <!-- Modal for Photo Gallery -->
+    <div id="imageModal" class="modal-overlay">
+        <span id="closeModal" class="modal-close"><i class="ri-close-line"></i></span>
+        <div class="modal-content">
+            <img id="modalImage" src="" alt="Full size photo" />
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById('imageModal');
+            const modalImg = document.getElementById('modalImage');
+            const closeModal = document.getElementById('closeModal');
+            const galleryImages = document.querySelectorAll('.gallery-img');
+
+            galleryImages.forEach(img => {
+                img.addEventListener('click', () => {
+                    modal.classList.add('visible');
+                    modalImg.src = img.dataset.fullSrc;
+                });
+            });
+
+            const close = () => {
+                modal.classList.remove('visible');
+            };
+
+            closeModal.addEventListener('click', close);
+            modal.addEventListener('click', (e) => {
+                // Close if clicked on the overlay, but not on the image itself
+                if (e.target === modal) {
+                    close();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

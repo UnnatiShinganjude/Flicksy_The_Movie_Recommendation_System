@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Flicksy - Loading</title>
+  <style>
+    body {
+      margin: 0;
+      height: 100vh;
+      background: radial-gradient(circle at center, #121212 0%, #1e1e2e 40%, #2d2d50 100%);
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 20px;
+      font-family: 'Segoe UI', sans-serif;
+      overflow: hidden;
+      transition: opacity 1s ease;
+    }
+    .logo-wrapper { width: 220px; height: 220px; }
+    .logo-image {
+      width: 100%;
+      opacity: 0;
+      transform: scale(0.3) rotate(-180deg);
+      animation: logoReveal 2.5s ease-out forwards 0.8s;
+      filter: drop-shadow(0 0 10px #8C52FF) drop-shadow(0 0 30px #DA6AFF);
+    }
+    @keyframes logoReveal {
+      0% { transform: scale(0.3) rotate(-180deg); opacity: 0; }
+      50% { transform: scale(1.05) rotate(90deg); opacity: 1; }
+      100% { transform: scale(1) rotate(360deg); opacity: 1; }
+    }
+    .logo-text {
+      font-size: 3rem; font-weight: 700; opacity: 0; transform: scale(0.5);
+      background: linear-gradient(270deg, #FF3CAC, #784BA0, #2B86C5, #F9B000, #FF3CAC);
+      background-size: 600% 600%;
+      -webkit-background-clip: text;
+      background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: textPopBounce 1s cubic-bezier(.68,-0.55,.27,1.55) forwards, rainbowGlow 4s ease infinite;
+      animation-delay: 3.3s, 4.3s;
+    }
+    @keyframes textPopBounce {
+      0% { opacity: 0; transform: scale(0.5); }
+      60% { opacity: 1; transform: scale(1.15); }
+      100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes rainbowGlow {
+      0%, 100% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+    }
+    body.fade-out { opacity: 0; }
+  </style>
+</head>
+<body>
+  <div class="logo-wrapper">
+    <img src="{{ url_for('static', filename='images/image.png') }}" alt="Flicksy Logo" class="logo-image" />
+  </div>
+  <div class="logo-text">Flicksy</div>
+
+<script>
+  window.addEventListener("load", function () {
+    // Total animation time before redirect starts
+    setTimeout(() => {
+      document.body.classList.add("fade-out");
+      
+      // Wait for fade-out to finish, then redirect
+      setTimeout(() => {
+        // THIS IS THE DYNAMIC PART:
+        // Flask will replace {{ redirect_url }} with the dashboard URL.
+        window.location.href = '{{ redirect_url }}';
+      }, 1000); // 1 second for fade-out
+
+    }, 5500); // 5.5 seconds for the main animation
+  });
+</script>
+
+</body>
+</html>

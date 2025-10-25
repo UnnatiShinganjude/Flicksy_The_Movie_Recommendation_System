@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Flicksy - FAQ</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle, #0d0d0d, #000000);
+      overflow-x: hidden;
+      color: #fff;
+    }
+
+    /* Star background */
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .stars::before, .stars::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 200%;
+      height: 200%;
+      background: url('https://www.transparenttextures.com/patterns/stardust.png');
+      animation: moveStars 100s linear infinite;
+      opacity: 0.3;
+    }
+    .stars::after {
+      animation-duration: 180s;
+      opacity: 0.5;
+    }
+    @keyframes moveStars {
+      from {transform: translate(0, 0);}
+      to {transform: translate(-50%, -50%);}
+    }
+
+    /* Page heading */
+    .faq-header {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+      color: #bb86fc; /* Purple heading */
+      text-shadow: 0 0 10px #bb86fc;
+      z-index: 1;
+      position: relative;
+    }
+
+    /* FAQ container */
+    .faq-container {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto;
+      padding: 2rem;
+    }
+
+    /* FAQ items */
+    .faq-item {
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      padding: 1rem 1.5rem;
+      margin: 1rem 0;
+      box-shadow: 0 4px 20px rgba(187, 134, 252, 0.2);
+      cursor: pointer;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      position: relative;
+    }
+
+    .faq-item:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 6px 25px rgba(187, 134, 252, 0.4);
+    }
+
+    /* Question with arrow */
+    .faq-question {
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: #e0e0e0; /* Off-white for readability */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    /* Arrow with hover glow */
+    .arrow {
+      transition: transform 0.3s ease, text-shadow 0.3s ease;
+      font-size: 1.5rem;
+      color: #bb86fc; /* Purple arrow */
+      text-shadow: 0 0 8px #bb86fc;
+    }
+
+    .faq-question:hover .arrow {
+      text-shadow: 0 0 15px #bb86fc, 0 0 30px #bb86fc;
+      transform: scale(1.2);
+    }
+
+    .faq-item.active .arrow {
+      transform: rotate(90deg) scale(1.2);
+      text-shadow: 0 0 15px #bb86fc, 0 0 30px #bb86fc;
+    }
+
+    /* FAQ Answer Animation */
+    .faq-answer {
+      max-height: 0;
+      overflow: hidden;
+      opacity: 0;
+      margin-top: 0.8rem;
+      font-size: 1rem;
+      line-height: 1.6;
+      color: #e0e0e0;
+      padding-left: 10px;
+      border-left: 2px solid #bb86fc; /* Purple border */
+      transition: all 0.5s ease;
+    }
+
+    .faq-item.active .faq-answer {
+      max-height: 500px;
+      opacity: 1;
+    }
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+
+  <div class="faq-header">Flicksy - FAQ</div>
+
+  <div class="faq-container">
+    <div class="faq-item">
+      <div class="faq-question">
+        What is Flicksy? <span class="arrow">▶</span>
+      </div>
+      <div class="faq-answer">Flicksy is a futuristic movie and series discovery platform that curates personalized recommendations for you.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">
+        How do I create an account? <span class="arrow">▶</span>
+      </div>
+      <div class="faq-answer">Simply click on the 'Create Profile' button on the homepage and follow the prompts to set up your account.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">
+        Is Flicksy free to use? <span class="arrow">▶</span>
+      </div>
+      <div class="faq-answer">Yes! Flicksy is completely free to use, with optional premium features coming soon.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">
+        Can I save movies to watch later? <span class="arrow">▶</span>
+      </div>
+      <div class="faq-answer">Absolutely! Use the "Add to Watchlist" button on any movie or series detail page.</div>
+    </div>
+    <div class="faq-item">
+      <div class="faq-question">
+        How does Flicksy recommend movies? <span class="arrow">▶</span>
+      </div>
+      <div class="faq-answer">Flicksy provides recommendations based on collaborative filtering, analyzing what movies and 
+        shows people with similar tastes have watched and enjoyed. Our system also considers a title's popularity and overall ratings.</div>
+    </div>
+  </div>
+
+  <script>
+    // FAQ accordion toggle
+    document.querySelectorAll('.faq-item').forEach(item => {
+      item.addEventListener('click', () => {
+        item.classList.toggle('active');
+      });
+    });
+  </script>
+</body>
+</html>

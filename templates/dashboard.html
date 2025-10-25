@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flicksy - Your Personal Movie Recommendation System</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com/3.4.16"></script>
+
+  <!-- Tailwind Config -->
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            secondary: '#FF5E84'
+          },
+          borderRadius: {
+            button: '8px'
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <!-- Remix Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/remixicon/4.6.0/remixicon.min.css">
+<!-- Custom CSS -->
+<link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+
+</head>
+
+<body class="bg-black text-white font-inter">
+
+  <!-- Header Navigation -->
+    <header class="fixed w-full z-50 bg-gradient-to-b from-black to-transparent">
+    <div class="container mx-auto px-4 py-3 flex items-center justify-between">
+
+        <div class="flex items-center space-x-4">
+            <img src="{{ url_for('static', filename='images/image.png') }}" alt="Logo" class="h-14 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]" />
+            <h1 class="text-2xl font-bold animate-glow-text bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500 text-transparent bg-clip-text font-pacifico">
+                Flicksy
+            </h1>
+        </div>
+
+<nav id="main-nav" class="hidden md:flex space-x-8">
+    <a href="#" class="nav-link flex items-center text-white font-medium hover:text-pink-400 transition-colors duration-300">
+        <div class="w-5 h-5 flex items-center justify-center mr-1"><i class="ri-home-5-line"></i></div>
+        Home
+    </a>
+    <a href="{{ url_for('watchlist') }}" class="nav-link flex items-center text-gray-300 font-medium hover:text-yellow-400 transition-colors duration-300">
+        <div class="w-5 h-5 flex items-center justify-center mr-1"><i class="ri-bookmark-line"></i></div>
+        Watchlist
+    </a>
+    <a href="{{ url_for('discover') }}" class="nav-link flex items-center text-gray-300 font-medium hover:text-green-400 transition-colors duration-300">
+        <div class="w-5 h-5 flex items-center justify-center mr-1"><i class="ri-compass-line"></i></div>
+        Discover
+    </a>
+    <a href="{{ url_for('profile') }}" class="nav-link flex items-center text-gray-300 font-medium hover:text-cyan-400 transition-colors duration-300">
+        <div class="w-5 h-5 flex items-center justify-center mr-1"><i class="ri-user-line"></i></div>
+        Profile
+    </a>
+</nav>
+
+        <div class="flex items-center space-x-4"> <div class="relative w-64">
+                <input type="text" placeholder="Search movies, actors..." class="search-input bg-gray-800 bg-opacity-70 text-white pl-10 pr-4 py-2 rounded-full border-none outline-none w-full">
+                <div class="absolute left-3 top-1/2 transform -translate-y-1/2 w-5 h-5 flex items-center justify-center text-gray-400">
+                    <i class="ri-search-line"></i>
+                </div>
+                <div id="search-results" class="absolute mt-2 w-full bg-gray-900 rounded-lg shadow-lg hidden max-h-96 overflow-y-auto z-50"></div>
+            </div>
+
+            <div class="w-10 h-10 flex items-center justify-center bg-gray-800 bg-opacity-70 rounded-full cursor-pointer hover:bg-gray-700 transition-colors">
+                <i class="ri-notification-3-line text-white"></i>
+            </div>
+
+            <div class="w-10 h-10 rounded-full overflow-hidden border-2 border-primary">
+    {% if current_user.profile_pic %}
+        <img src="{{ url_for('static', filename=current_user.profile_pic) }}" alt="User Profile" class="w-full h-full object-cover">
+    {% else %}
+        <img src="{{ url_for('static', filename='images/default_avatar.png') }}" alt="User Profile" class="w-full h-full object-cover">
+    {% endif %}
+</div>
+        </div>
+
+    </div>
+</header>
+<!-- Hero Section -->
+<section class="hero-section relative pt-24 pb-16">
+  <div class="container mx-auto px-4">
+    <!-- Platform Tabs -->
+<!-- Platform Tabs -->
+<div class="flex justify-center mb-6">
+    <div class="bg-black bg-opacity-70 rounded-full px-1 py-1 flex space-x-1">
+        <a href="{{ url_for('dashboard', platform='all') }}" class="platform-tab text-white px-4 py-2 rounded-full whitespace-nowrap font-medium {% if active_platform == 'all' %}active bg-primary{% endif %}">
+            All Platforms
+        </a>
+        <a href="{{ url_for('dashboard', platform='netflix') }}" class="platform-tab text-gray-300 px-4 py-2 rounded-full whitespace-nowrap font-medium hover:bg-gray-800 transition-colors {% if active_platform == 'netflix' %}active bg-primary{% endif %}">
+            Netflix
+        </a>
+        <a href="{{ url_for('dashboard', platform='prime') }}" class="platform-tab text-gray-300 px-4 py-2 rounded-full whitespace-nowrap font-medium hover:bg-gray-800 transition-colors {% if active_platform == 'prime' %}active bg-primary{% endif %}">
+            Prime Video
+        </a>
+        <a href="{{ url_for('dashboard', platform='hotstar') }}" class="platform-tab text-gray-300 px-4 py-2 rounded-full whitespace-nowrap font-medium hover:bg-gray-800 transition-colors {% if active_platform == 'hotstar' %}active bg-primary{% endif %}">
+            Disney+
+        </a>
+    </div>
+</div>
+
+<!-- Carousel for trending movies-->
+<div id="trending-section" class="carousel relative w-full h-[500px] overflow-hidden">
+
+    <div class="carousel-items flex transition-transform duration-500">
+        {% for movie in trending %}
+        <div class="carousel-item w-full flex-shrink-0 h-[500px] flex items-center justify-center px-12">
+
+            <a href="{{ url_for('movie_details', movie_id=movie.id) }}" class="w-1/3 h-[500px] rounded-xl overflow-hidden shadow-2xl relative block">
+    <img src="https://image.tmdb.org/t/p/original{{ movie.poster_path or movie.backdrop_path }}" alt="{{ movie.title }}" class="w-full h-full object-cover rounded-xl" />
+    <span class="absolute top-2 left-2 bg-red-600 text-white text-xs px-2 py-1 rounded">Trending</span>
+</a>
+
+
+            <div class="w-1/2 h-[500px] p-10 flex flex-col justify-center bg-gradient-to-r from-black via-gray-900 to-black rounded-xl space-y-4">
+                
+                <h2 class="text-4xl font-bold text-white mb-2">{{ movie.title }}</h2>
+                
+                <div class="flex items-center mb-4">
+                    <span class="bg-yellow-500 text-black text-sm font-bold px-3 py-1 rounded">
+                        IMDb: {{ movie.vote_average }}
+                    </span>
+                </div>
+
+                <div class="flex space-x-3 mb-4 flex-wrap items-center">
+                    {% for genre in movie.genres %}
+                    <span class="px-3 py-1 bg-gray-800 text-gray-300 rounded-full text-sm mb-2">
+                         {{ genre.name }}
+                    </span>
+                    {% endfor %}
+
+                    {% if movie.runtime %}
+                    <span class="px-3 py-1 bg-gray-800 text-gray-300 rounded-full text-sm mb-2">
+                        {{ movie.runtime }} min
+                    </span>
+                    {% endif %}
+                    
+                    <span class="px-3 py-1 bg-gray-800 bg-opacity-70 text-gray-300 rounded-full text-sm mb-2">
+                        {{ movie.release_date }}
+                    </span>
+
+                    <span class="px-3 py-1 bg-gray-800 bg-opacity-70 text-gray-300 rounded-full text-sm mb-2">
+                        {{ movie.original_language | upper }}
+                    </span>
+                </div>
+
+                <p class="text-gray-300 mb-8 line-clamp-3">{{ movie.overview }}</p>
+
+                <a href="{{ url_for('show_trailer', movie_id=movie.id) }}" 
+   class=" bg-secondary text-white px-6 py-3 rounded-button font-medium hover:bg-pink-600 transition-colors inline-block"
+   target="_blank"> <i class="ri-play-line mr-2"></i> Play Trailer
+</a>
+
+                <button 
+class="add-to-watchlist flex items-center bg-gray-800 bg-opacity-70 text-white px-6 py-3 rounded-button font-medium hover:bg-gray-700 transition-colors whitespace-nowrap mb-2"
+    data-tmdb-id="{{ movie.id }}"
+    data-media-type="movie">
+    
+    <div class="button-content flex items-center">
+        <div class="w-5 h-5 flex items-center justify-center mr-2">
+            <i class="ri-add-line"></i>
+        </div>
+        <span>Add to Watchlist</span>
+    </div>
+</button>
+            </div> </div> {% endfor %}
+    </div> 
+    <button id="prevBtn" class="absolute top-1/2 left-4 -translate-y-1/2 z-20 bg-black/50 text-white rounded-full h-10 w-10 flex items-center justify-center hover:bg-black/75 transition">&lt;</button>
+<button id="nextBtn" class="absolute top-1/2 right-4 -translate-y-1/2 z-20 bg-black/50 text-white rounded-full h-10 w-10 flex items-center justify-center hover:bg-black/75 transition">&gt;</button>
+</div> <div class="carousel-indicators flex justify-center mt-4 space-x-2">
+    {% for i in range(trending|length) %} <button class="w-3 h-3 rounded-full bg-gray-400 hover:bg-white transition-all duration-300" data-index="{{ i }}">
+    </button>
+    {% endfor %}
+</div>
+</section>
+
+<!----------------------------------------------2/8--------------------------------------------->
+    <section id="recommendations-section" class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center mb-6">
+            <h2 class="text-2xl font-bold text-gray-900">Popular in Your Preferred Genres</h2>
+        </div>
+
+        <div class="overflow-x-auto custom-scrollbar pb-4">
+            <div class="flex space-x-6" style="min-width: max-content;">
+
+                {% for movie in preferred_genre_movies %}
+                <div class="movie-card w-64 flex-shrink-0 bg-white rounded-xl overflow-hidden shadow-lg border border-gray-200 flex flex-col">
+                    <div class="relative h-96">
+                        <a href="{{ url_for('movie_details', movie_id=movie.tmdb_id) }}">
+                            <img src="{{ movie.poster_path }}" alt="{{ movie.title }}" class="w-full h-full object-cover">
+                        </a>
+
+                        <div class="absolute top-3 right-3 px-2 py-1 bg-yellow-500 rounded text-xs font-bold text-black">
+                            <i class="ri-star-fill"></i>
+                            {{ "%.1f"|format(movie.rating or 0) }}
+                        </div>
+
+                        <div class="absolute inset-0 bg-gradient-to-t from-black to-transparent opacity-0 hover:opacity-100 transition-opacity flex flex-col justify-end p-4">
+                            <div class="flex space-x-2 justify-center">
+                                <a href="{{ url_for('show_trailer', movie_id=movie.tmdb_id) }}" target="_blank" class="w-10 h-10 flex items-center justify-center bg-white/90 rounded-full hover:bg-white transition-transform hover:scale-110" title="Play Trailer">
+                                    <i class="ri-play-fill text-gray-900 text-xl"></i>
+                                </a>
+                                <button class="add-to-watchlist w-10 h-10 flex items-center justify-center bg-white/90 rounded-full hover:bg-white transition-transform hover:scale-110" title="Add to Watchlist" data-tmdb-id="{{ movie.tmdb_id }}" data-media-type="movie">
+                                    <i class="ri-add-line text-gray-900 text-xl"></i>
+                                </button>
+                                <a href="{{ url_for('movie_details', movie_id=movie.tmdb_id) }}" class="w-10 h-10 flex items-center justify-center bg-white/90 rounded-full hover:bg-white transition-transform hover:scale-110" title="More Info">
+                                    <i class="ri-information-line text-gray-900 text-xl"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="p-4 flex-grow flex flex-col">
+                        <h3 class="font-bold text-gray-900 text-lg mb-1 truncate">{{ movie.title }}</h3>
+                        <div class="flex space-x-2 mb-2">
+                            <span class="text-xs text-gray-600">{{ movie.release_date[0:4] if movie.release_date else 'N/A' }}</span>
+                            <span class="text-xs text-gray-600">•</span>
+                            <span class="text-xs text-gray-600 truncate">{{ movie.genre }}</span>
+                        </div>
+                        
+                        <div class="flex items-center mt-auto pt-2">
+                            {% set rating_scaled = (movie.rating or 0) / 2 %}
+                            {% set full_stars = rating_scaled | int %}
+                            {% set half_star = true if (rating_scaled - full_stars) >= 0.5 else false %}
+                            
+                            <div class="flex text-yellow-500">
+                                {% for i in range(5) %}
+                                    {% if i < full_stars %}
+                                        <i class="ri-star-fill"></i>
+                                    {% elif i == full_stars and half_star %}
+                                        <i class="ri-star-half-fill"></i>
+                                    {% else %}
+                                        <i class="ri-star-line text-gray-300"></i>
+                                    {% endif %}
+                                {% endfor %}
+                            </div>
+                            <span class="ml-2 text-sm text-gray-600">{{ "%.1f"|format(movie.rating or 0) }}/10</span>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                <div class="p-4 text-center text-gray-500 w-full">
+                    <p>No movies match your preferred genres and languages yet.</p>
+                    <p class="text-sm">Rate some movies or update your profile to get recommendations!</p>
+                </div>
+                {% endfor %}
+
+            </div>
+        </div>
+    </div>
+</section>
+
+
+<!---Recommended for you section-->
+<section id="recommendations-section" class="py-12 bg-gray-50">
+    <div class="container mx-auto px-4">
+        <div class="flex justify-between items-center mb-8">
+            <h2 class="text-2xl font-bold text-gray-900">Recommended For You</h2>
+            
+        </div>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {% for movie in hybrid_recommendations %}
+                <div class="bg-white rounded-xl overflow-hidden shadow-lg hover:shadow-xl transition-shadow flex flex-col">
+                    <div class="relative">
+                        <a href="{{ url_for('movie_details', movie_id=movie.tmdb_id) }}">
+                            <img src="{{ movie.poster_path }}" alt="{{ movie.title }}" class="w-full h-64 object-cover">
+                        </a>
+                        
+                        {% if movie.match_score %}
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-purple-600 rounded-full text-sm font-bold text-white">
+                           {{ "%.0f%% Match"|format(movie.match_score) }}
+                        </div>
+                        {% endif %}
+
+                        <div class="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black to-transparent p-4">
+                            <div class="flex items-center space-x-2">
+    {% if movie.vote_average and movie.vote_average > 0 %}
+        <div class="px-2 py-1 bg-yellow-500 rounded text-xs font-bold text-black">TMDB {{ "%.1f"|format(movie.vote_average) }}</div>
+    {% endif %}
+</div>
+                        </div>
+                    </div>
+                    <div class="p-6 flex flex-col flex-grow">
+                        <h3 class="font-bold text-gray-900 text-xl mb-2">{{ movie.title }}</h3>
+                        <div class="flex space-x-2 mb-3">
+                            <span class="text-sm text-gray-600 truncate">{{ movie.genre }}</span>
+                            <span class="text-sm text-gray-600">•</span>
+                            <span class="text-sm text-gray-600">{{ (movie.release_date | string)[0:4] if movie.release_date else 'N/A' }}</span>
+                        </div>
+                        <p class="text-gray-700 mb-4 text-sm line-clamp-3">{{ movie.overview }}</p>
+                        
+                        {% if movie.reasons %}
+                        <div class="bg-gray-100 p-4 rounded-lg mb-4 mt-auto">
+                            <h4 class="text-sm font-semibold text-gray-900 mb-2">Why We Recommend This</h4>
+                            <ul class="text-sm text-gray-700 space-y-2">
+                                {% for reason in movie.reasons %}
+                                <li class="flex items-start">
+                                    <div class="w-5 h-5 flex items-center justify-center mr-2 mt-0.5 text-purple-600">
+                                        <i class="ri-check-line"></i>
+                                    </div>
+                                    <span>{{ reason }}</span>
+                                </li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                        {% endif %}
+
+                        <div class="flex space-x-3 pt-2">
+                            <a href="{{ url_for('show_trailer', movie_id=movie.tmdb_id) }}" target="_blank" class="flex-1 flex items-center justify-center bg-purple-600 text-white px-4 py-3 rounded-button font-medium hover:bg-purple-700 transition-colors whitespace-nowrap">
+                                <div class="w-5 h-5 flex items-center justify-center mr-2">
+                                    <i class="ri-play-fill"></i>
+                                </div>
+                                Watch Trailer
+                            </a>
+                            <button class="add-to-watchlist w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors" title="Add to Watchlist" data-tmdb-id="{{ movie.tmdb_id }}" data-media-type="movie">
+                                <i class="ri-add-line text-gray-700 text-xl"></i>
+                            </button>
+                            <a href="{{ url_for('movie_details', movie_id=movie.tmdb_id) }}" class="w-12 h-12 flex items-center justify-center bg-gray-100 rounded-full hover:bg-gray-200 transition-colors" title="More Info">
+                                <i class="ri-information-line text-gray-700 text-xl"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<!-- Upcoming Movies/Series Section -->
+<section class="py-12 bg-white">
+    <div class="container mx-auto px-4">
+        <h2 class="text-2xl font-bold text-gray-900 mb-8">{{ section_title }}</h2>
+        
+        <div class="relative">
+            <div class="h-1 bg-gray-200 rounded-full mb-8"></div>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                
+                {% for movie in dynamic_section_movies[:4] %}
+                <div class="bg-white rounded-xl overflow-hidden shadow-md hover:shadow-lg transition-shadow flex flex-col">
+                    <div class="relative">
+                        <a href="{{ url_for('movie_details', movie_id=movie.id) }}">
+                            <img src="https://image.tmdb.org/t/p/w500{{ movie.poster_path }}" alt="{{ movie.title }}" class="w-full h-48 object-cover">
+                        </a>
+                        <div class="absolute top-3 right-3 px-3 py-1 bg-purple-600 rounded-full text-xs font-bold text-white">
+                            {{ movie.release_date }}
+                        </div>
+                    </div>
+                    <div class="p-4 flex flex-col flex-grow">
+                        <h3 class="font-bold text-gray-900 text-lg mb-2">{{ movie.title }}</h3>
+                        
+                        <!-- THIS IS THE NEW LINE TO DISPLAY GENRES -->
+                        <div class="flex space-x-2 mb-3">
+                            <span class="text-xs text-gray-600">{{ movie.genres_str }}</span>
+                        </div>
+
+                        <p class="text-sm text-gray-700 mb-4 line-clamp-2 flex-grow">{{ movie.overview }}</p>
+                        <div class="flex justify-between items-center mt-auto">
+                            <a href="{{ url_for('show_trailer', movie_id=movie.id) }}" target="_blank" class="flex items-center bg-purple-600 text-white px-3 py-2 rounded-lg font-medium hover:bg-purple-700 transition-colors whitespace-nowrap">
+                                <div class="w-5 h-5 flex items-center justify-center mr-1">
+                                    <i class="ri-play-circle-line"></i>
+                                </div>
+                                Watch Teaser
+                            </a>
+                            <button class="flex items-center bg-gray-100 text-gray-700 px-3 py-2 rounded-button font-medium hover:bg-gray-200 transition-colors whitespace-nowrap">
+                                <div class="w-5 h-5 flex items-center justify-center mr-1">
+                                    <i class="ri-notification-3-line"></i>
+                                </div>
+                                Notify Me
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+                    <p class="text-gray-500 col-span-full text-center">No movies found for this platform.</p>
+                {% endfor %}
+                
+            </div>
+        </div>
+    </div>
+</section>
+
+ <!-- Footer-->
+<footer class="bg-gray-900 text-white py-12">
+    <div class="container mx-auto px-4">
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+            <div>
+                <img src="{{ url_for('static', filename='images/image.png') }}" alt="Logo" class="h-14 drop-shadow-[0_0_15px_rgba(255,255,255,0.8)]" />
+                
+                <p class="text-gray-400 mb-4">Your personal movie recommendation system. Find perfect movie for any mood any time.</p>
+                <div class="flex space-x-4">
+                    <a href="https://www.facebook.com" target="_blank" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full hover:bg-primary transition-colors"><i class="ri-facebook-fill"></i></a>
+                    <a href="https://www.twitter.com" target="_blank" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full hover:bg-primary transition-colors"><i class="ri-twitter-x-fill"></i></a>
+                    <a href="https://www.instagram.com" target="_blank" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full hover:bg-primary transition-colors"><i class="ri-instagram-fill"></i></a>
+                    <a href="https://www.youtube.com" target="_blank" class="w-10 h-10 flex items-center justify-center bg-gray-800 rounded-full hover:bg-primary transition-colors"><i class="ri-youtube-fill"></i></a>
+                </div>
+            </div>
+            
+            <div>
+                <h3 class="text-lg font-semibold mb-4">Quick Links</h3>
+                <ul class="space-y-2">
+                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Home</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Browse Movies</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">New Releases</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Top Rated</a></li>
+                    <li><a href="#" class="text-gray-400 hover:text-white transition-colors">Genres</a></li>
+                </ul>
+            </div>
+            
+            <div>
+    <h3 class="text-lg font-semibold mb-4">Support</h3>
+    <ul class="space-y-2">
+        
+        <li><a href="{{ url_for('contact') }}" class="text-gray-400 hover:text-white transition-colors">Contact Us</a></li>
+        <li><a href="{{ url_for('faq') }}" class="text-gray-400 hover:text-white transition-colors">FAQ</a></li>
+        <li><a href="{{ url_for('privacypolicy') }}" class="text-gray-400 hover:text-white transition-colors">Privacy Policy</a></li>
+        <li><a href="{{ url_for('terms') }}" class="text-gray-400 hover:text-white transition-colors">Terms of Service</a></li>
+    </ul>
+</div>
+            
+            <div>
+    <h3 class="text-lg font-semibold mb-4">Movie Preferences</h3>
+    <p class="text-gray-400 mb-4">Get your preference movie on mood and genera for recommendations.</p>
+    
+    <a href="/discover" class="flex mb-4">
+        <p class="bg-gray-800 text-white px-4 py-2 rounded-l-lg border-none outline-none flex-1"> Get Your Recomendation </p>
+        <div class="bg-purple-600 text-white px-4 py-2 rounded-r-lg font-medium hover:bg-purple-700 transition-colors whitespace-nowrap !rounded-button">
+            get
+        </div>
+    </a>
+    
+    <div class="flex items-center">
+        <span class="text-gray-400 mr-2">Available on:</span>
+        <div class="flex space-x-3">
+            <i class="ri-apple-fill text-gray-400 text-xl"></i>
+            <i class="ri-android-fill text-gray-400 text-xl"></i>
+            <i class="ri-tv-fill text-gray-400 text-xl"></i>
+        </div>
+    </div>
+</div>
+        </div>
+        
+        <div class="border-t border-gray-800 mt-8 pt-8 flex flex-col md:flex-row justify-between items-center">
+            <p class="text-gray-500 text-sm mb-4 md:mb-0">© 2025 Flicksy. All rights reserved.</p>
+            <div class="flex space-x-4">
+                <i class="ri-visa-fill text-gray-400 text-2xl"></i>
+                <i class="ri-mastercard-fill text-gray-400 text-2xl"></i>
+                <i class="ri-paypal-fill text-gray-400 text-2xl"></i>
+                <i class="ri-apple-pay-fill text-gray-400 text-2xl"></i>
+            </div>
+        </div>
+    </div>
+</footer>
+
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+
+</body>
+</html>

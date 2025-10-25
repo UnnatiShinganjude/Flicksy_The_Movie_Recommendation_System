@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Terms of Service - Flicksy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle, #0d0d0d, #000000);
+      overflow-x: hidden;
+      color: #fff;
+    }
+
+    /* Star background */
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .stars::before, .stars::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 200%;
+      height: 200%;
+      background: url('https://www.transparenttextures.com/patterns/stardust.png');
+      animation: moveStars 100s linear infinite;
+      opacity: 0.3;
+    }
+    .stars::after {
+      animation-duration: 180s;
+      opacity: 0.5;
+    }
+    @keyframes moveStars {
+      from {transform: translate(0, 0);}
+      to {transform: translate(-50%, -50%);}
+    }
+
+    /* Page heading */
+    .terms-header {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+      color: #bb86fc; /* Purple heading */
+      text-shadow: 0 0 10px #bb86fc;
+      z-index: 1;
+      position: relative;
+    }
+
+    /* Terms container */
+    .terms-container {
+      position: relative;
+      z-index: 1;
+      max-width: 800px;
+      margin: 0 auto 2rem;
+      padding: 2rem;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(187, 134, 252, 0.2);
+      line-height: 1.6;
+      overflow-y: auto;
+      max-height: 80vh;
+    }
+    
+    .terms-container::-webkit-scrollbar {
+      width: 8px;
+    }
+    .terms-container::-webkit-scrollbar-track {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 10px;
+    }
+    .terms-container::-webkit-scrollbar-thumb {
+      background: #bb86fc;
+      border-radius: 10px;
+    }
+    .terms-container::-webkit-scrollbar-thumb:hover {
+      background: #a260f8;
+    }
+
+    /* Terms content styling */
+    .terms-container h2 {
+      font-size: 1.8rem;
+      color: #e0e0e0;
+      margin-top: 2rem;
+      margin-bottom: 1rem;
+      border-bottom: 2px solid #bb86fc;
+      padding-bottom: 0.5rem;
+    }
+
+    .terms-container h3 {
+      font-size: 1.2rem;
+      color: #e0e0e0;
+      margin-top: 1.5rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .terms-container p {
+      margin-bottom: 1rem;
+    }
+    
+    .terms-container ul {
+      list-style-type: none;
+      padding-left: 0;
+    }
+    
+    .terms-container li {
+      margin-bottom: 0.5rem;
+      position: relative;
+      padding-left: 20px;
+    }
+    
+    .terms-container li::before {
+      content: '•';
+      position: absolute;
+      left: 0;
+      color: #bb86fc;
+      font-size: 1.2rem;
+    }
+
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+
+  <div class="terms-header">Flicksy - Terms of Service</div>
+
+  <div class="terms-container">
+    <p>Last updated: September 20, 2025</p>
+    <p>Please read these Terms of Service ("Terms", "Terms of Service") carefully before using the flicksy.com website (the "Service") operated by Flicksy ("us", "we", or "our").</p>
+    
+    <h2>1. Acceptance of Terms</h2>
+    <p>By accessing or using the Service you agree to be bound by these Terms. If you disagree with any part of the terms then you may not access the Service.</p>
+    
+    <h2>2. Intellectual Property</h2>
+    <p>The Service and its original content, features, and functionality are and will remain the exclusive property of Flicksy and its licensors. The Service is protected by copyright, trademark, and other laws of both the India and foreign countries. Our trademarks and trade dress may not be used in connection with any product or service without the prior written consent of Flicksy.</p>
+    
+    <h2>3. Links to Other Websites</h2>
+    <p>Our Service may contain links to third-party web sites or services that are not owned or controlled by Flicksy.</p>
+    <p>Flicksy has no control over, and assumes no responsibility for, the content, privacy policies, or practices of any third party web sites or services. You further acknowledge and agree that Flicksy shall not be responsible or liable, directly or indirectly, for any damage or loss caused or alleged to be caused by or in connection with use of or reliance on any such content, goods or services available on or through any such web sites or services.</p>
+    
+    <h2>4. Termination</h2>
+    <p>We may terminate or suspend your account immediately, without prior notice or liability, for any reason whatsoever, including without limitation if you breach the Terms.</p>
+    
+    <h2>5. Governing Law</h2>
+    <p>These Terms shall be governed and construed in accordance with the laws of India, without regard to its conflict of law provisions.</p>
+    
+    <h2>6. Changes to Terms</h2>
+    <p>We reserve the right, at our sole discretion, to modify or replace these Terms at any time. If a revision is material, we will provide at least 30 days' notice prior to any new terms taking effect. What constitutes a material change will be determined at our sole discretion.</p>
+    
+    <h2>7. Contact Us</h2>
+    <p>If you have any questions about these Terms, please contact us.</p>
+    <ul>
+      <li>By email: terms@flicksy.com</li>
+    </ul>
+  </div>
+</body>
+</html>

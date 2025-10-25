@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Contact Us - Flicksy</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: radial-gradient(circle, #0d0d0d, #000000);
+      overflow-x: hidden;
+      color: #fff;
+    }
+
+    /* Star background */
+    .stars {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 0;
+      overflow: hidden;
+    }
+    .stars::before, .stars::after {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 200%;
+      height: 200%;
+      background: url('https://www.transparenttextures.com/patterns/stardust.png');
+      animation: moveStars 100s linear infinite;
+      opacity: 0.3;
+    }
+    .stars::after {
+      animation-duration: 180s;
+      opacity: 0.5;
+    }
+    @keyframes moveStars {
+      from {transform: translate(0, 0);}
+      to {transform: translate(-50%, -50%);}
+    }
+
+    /* Page heading */
+    .contact-header {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 2.5rem;
+      letter-spacing: 2px;
+      color: #bb86fc; /* Purple heading */
+      text-shadow: 0 0 10px #bb86fc;
+      z-index: 1;
+      position: relative;
+    }
+
+    /* Contact container */
+    .contact-container {
+      position: relative;
+      z-index: 1;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 2.5rem;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(15px);
+      border-radius: 20px;
+      box-shadow: 0 4px 20px rgba(187, 134, 252, 0.2);
+    }
+
+    /* Form Styling */
+    .form-group {
+      margin-bottom: 1.5rem;
+    }
+
+    .form-group label {
+      display: block;
+      color: #e0e0e0;
+      font-size: 1rem;
+      margin-bottom: 0.5rem;
+      font-weight: 600;
+    }
+
+    .form-group input,
+    .form-group textarea {
+      width: calc(100% - 20px);
+      padding: 1rem 10px;
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 1rem;
+      transition: border-color 0.3s ease, box-shadow 0.3s ease;
+      resize: vertical;
+    }
+
+    .form-group input:focus,
+    .form-group textarea:focus {
+      outline: none;
+      border-color: #bb86fc;
+      box-shadow: 0 0 0 3px rgba(187, 134, 252, 0.3);
+    }
+
+    .form-group input::placeholder,
+    .form-group textarea::placeholder {
+      color: rgba(245, 245, 245, 0.5);
+    }
+
+    /* Submit Button */
+    .submit-btn {
+      width: 100%;
+      padding: 1rem;
+      background-color: #bb86fc;
+      color: #fff;
+      border: none;
+      border-radius: 8px;
+      font-size: 1.1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: background-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+      box-shadow: 0 4px 15px rgba(187, 134, 252, 0.4);
+    }
+
+    .submit-btn:hover {
+      background-color: #a260f8;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 20px rgba(187, 134, 252, 0.5);
+    }
+  </style>
+</head>
+<body>
+  <div class="stars"></div>
+
+  <div class="contact-header">Contact Flicksy</div>
+
+  <div class="contact-container">
+    <p style="text-align: center; margin-bottom: 2rem;">Have questions or feedback? Fill out the form and we’ll get back to you soon.</p>
+    <form>
+      <div class="form-group">
+        <label for="name">Name</label>
+        <input type="text" id="name" placeholder="Your name" required>
+      </div>
+      <div class="form-group">
+        <label for="email">Email</label>
+        <input type="email" id="email" placeholder="Your email address" required>
+      </div>
+      <div class="form-group">
+        <label for="subject">Subject</label>
+        <input type="text" id="subject" placeholder="What is this about?" required>
+      </div>
+      <div class="form-group">
+        <label for="message">Message</label>
+        <textarea id="message" rows="5" placeholder="Your message" required></textarea>
+      </div>
+      <button type="submit" class="submit-btn">Send Message</button>
+    </form>
+  </div>
+</body>
+</html>

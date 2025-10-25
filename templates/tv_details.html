@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>{{ tv.name }} - Flicksy</title>
+
+<script src="https://cdn.tailwindcss.com"></script>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@4.2.0/fonts/remixicon.css" rel="stylesheet" />
+
+<style>
+/* ---------- Body & Background ---------- */
+body { 
+    background: linear-gradient(to bottom, #05060a, #0b0f1a); 
+    color: #e6ebf3; 
+    font-family:'Plus Jakarta Sans'; 
+    overflow-x:hidden; 
+}
+
+/* ---------- Hide Scrollbar for Reviews Container ---------- */
+#reviews-container {
+    -ms-overflow-style: none;  /* IE and Edge */
+    scrollbar-width: none;     /* Firefox */
+}
+#reviews-container::-webkit-scrollbar {
+    display: none;             /* Chrome, Safari, and Opera */
+}
+/* ---------- Stars Animation ---------- */
+.stars, .stars:before, .stars:after {
+    position: fixed; top:0; left:0; width:100%; height:100%; content:""; pointer-events:none; background-repeat:repeat; background-size:contain;
+    z-index: -1;
+}
+.stars { 
+    background-image: radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,.6) 50%, transparent 51%), radial-gradient(1px 1px at 120px 80px, rgba(255,255,255,.35) 50%, transparent 51%), radial-gradient(1px 1px at 300px 200px, rgba(255,255,255,.25) 50%, transparent 51%);
+    animation: drift 90s linear infinite; 
+}
+.stars:before { 
+    background-image: radial-gradient(1px 1px at 50px 60px, rgba(255,255,255,.5) 50%, transparent 51%), radial-gradient(1px 1px at 250px 140px, rgba(255,255,255,.4) 50%, transparent 51%);
+    animation: drift 120s linear infinite reverse; 
+    opacity:.7; 
+}
+.stars:after { 
+    background-image: radial-gradient(2px 2px at 160px 40px, rgba(255,255,255,.25) 50%, transparent 51%), radial-gradient(1px 1px at 90px 250px, rgba(255,255,255,.3) 50%, transparent 51%);
+    animation: drift 150s linear infinite; 
+    opacity:.5; 
+}
+@keyframes drift { 
+    from { background-position:0 0,0 0,0 0; } 
+    to { background-position:-2000px -1200px,1000px -800,-1500px 1200px; } 
+}
+/* ---------- Glass Effect ---------- */
+.glass { 
+    backdrop-filter: blur(15px); 
+    background: rgba(16,18,26,0.8); 
+    border: 1px solid rgba(255,255,255,0.1); 
+    border-radius: 2rem; 
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6); 
+    position: relative; 
+}
+.glass-panel {
+    border-radius: 1rem;
+    background: rgba(16,18,26,0.7);
+    border: 1px solid rgba(255,255,255,0.1);
+    box-shadow: 0 4px 16px rgba(0,0,0,0.4);
+}
+/* ---------- Custom Animations ---------- */
+@keyframes glow-text {
+    0%, 100% { text-shadow: 0 0 5px rgba(160, 32, 240, 0.7), 0 0 10px rgba(160, 32, 240, 0.5); }
+    50% { text-shadow: 0 0 15px rgba(160, 32, 240, 1), 0 0 25px rgba(160, 32, 240, 0.8); }
+}
+.animate-glow-text { animation: glow-text 3s ease-in-out infinite; }
+@keyframes fade-in-up {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up { animation: fade-in-up 0.8s ease-out forwards; }
+.animate-fade-in-up-1 { animation-delay: 0.2s; }
+.animate-fade-in-up-2 { animation-delay: 0.4s; }
+.animate-fade-in-up-3 { animation-delay: 0.6s; }
+.animate-fade-in-up-4 { animation-delay: 0.8s; }
+.animate-fade-in-up-5 { animation-delay: 1.0s; }
+.cast-img:hover { animation: pulse 0.5s infinite alternate; }
+@keyframes pulse { from { transform: scale(1); } to { transform: scale(1.05); } }
+.btn-shadow-pulse:hover { box-shadow: 0 0 20px rgba(160, 32, 240, 0.7); }
+</style>
+</head>
+<body data-tv-id="{{ tv.id }}">
+
+<div class="stars"></div>
+
+<main class="container mx-auto px-4 py-20 z-10 relative">
+  <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+    
+    <div class="md:col-span-1 flex flex-col items-center md:items-start space-y-6">
+      <img src="https://image.tmdb.org/t/p/w500{{ tv.poster_path }}" alt="Poster for {{ tv.name }}" class="w-full max-w-sm rounded-3xl shadow-2xl glass-panel transform transition-transform hover:scale-105 animate-fade-in-up animate-fade-in-up-1">
+      
+      <div class="w-full p-6 glass-panel text-center md:text-left animate-fade-in-up animate-fade-in-up-2">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-purple-400 font-['Unbounded']">{{ tv.name }}</h2>
+        <p class="text-lg text-gray-300 mt-2">
+            {{ tv.first_air_date.split('-')[0] }} | 
+            {% for genre in tv.genres %}{{ genre.name }}{% if not loop.last %}, {% endif %}{% endfor %} | 
+            {{ tv.number_of_seasons }} Season{% if tv.number_of_seasons > 1 %}s{% endif %}
+        </p>
+        
+        <div class="flex items-center justify-center md:justify-start space-x-2 mt-4">
+          <i class="ri-star-fill text-yellow-400 text-2xl"></i>
+          <span class="text-2xl font-bold">{{ "%.1f"|format(tv.vote_average) }}</span>
+          <span class="text-gray-400">/ 10</span>
+        </div>
+        
+        <div class="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-4 mt-6">
+          <a href="{{ url_for('show_tv_trailer', tv_id=tv.id) }}" target="_blank" class="bg-gradient-to-tr from-fuchsia-500 to-purple-500 text-white px-6 py-3 font-extrabold rounded-xl shadow-lg hover:scale-105 transition btn-shadow-pulse flex-1 flex items-center justify-center">
+            <i class="ri-play-fill mr-2"></i> Watch Trailer
+          </a>
+          
+
+<button class="watchlist-btn bg-transparent border border-white/10 text-white px-6 py-3 font-extrabold rounded-xl hover:bg-white/10 transition flex-1 flex items-center justify-center"
+        data-action="add"
+        data-tv-id="{{ tv.id }}">
+    <i class="ri-bookmark-line mr-2"></i> Watchlist
+</button>
+
+<script src="{{ url_for('static', filename='js/watchlist.js') }}"></script>
+        </div>
+      </div>
+    </div>
+    
+    <div class="md:col-span-2 space-y-8">
+      
+      <section class="glass p-8 animate-fade-in-up animate-fade-in-up-3">
+        <h3 class="text-3xl font-extrabold mb-4 font-['Unbounded']">Overview</h3>
+        <p class="text-gray-300 leading-relaxed">{{ tv.overview }}</p>
+      </section>
+      
+      <section class="glass p-8 animate-fade-in-up animate-fade-in-up-4">
+        <h3 class="text-3xl font-extrabold mb-4 font-['Unbounded']">Cast</h3>
+        <div id="cast-container" class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-6 text-center">
+            <p>Loading cast...</p>
+        </div>
+      </section>
+      
+      <section class="glass p-8 animate-fade-in-up animate-fade-in-up-5">
+        <h3 class="text-3xl font-extrabold mb-4 font-['Unbounded']">Available on</h3>
+        <div id="platform-container" class="flex flex-wrap gap-4">
+            <p>Loading platforms...</p>
+        </div>
+      </section>
+      
+<section class="glass p-8 animate-fade-in-up animate-fade-in-up-5">
+    <h3 class="text-3xl font-extrabold font-['Unbounded'] mb-4">Reviews</h3>
+
+    <div class="flex items-center space-x-2">
+        <button id="scroll-left-btn" class="bg-purple-600/30 p-2 rounded-full hover:bg-purple-600/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <i class="ri-arrow-left-s-line text-2xl"></i>
+        </button>
+
+        <div id="reviews-container" class="flex flex-1 space-x-6 overflow-x-auto pb-4">
+            {% if reviews %}
+                {% for review in reviews %}
+                <div class="glass-panel p-4 flex items-start space-x-4 w-96 flex-shrink-0">
+                    <div class="flex-shrink-0">
+                        <div class="w-12 h-12 rounded-full bg-purple-800 flex items-center justify-center font-bold text-xl">
+                            {{ review.author[0] }}
+                        </div>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center space-x-3">
+                            <span class="font-semibold">{{ review.author }}</span>
+                            <span class="text-sm text-gray-400">via {{ review.source }}</span>
+                        </div>
+                        {% if review.rating %}
+                        <div class="flex text-yellow-400 mt-1">
+                            {% for i in range(1, review.rating + 1) %}<i class="ri-star-fill"></i>{% endfor %}
+                            {% for i in range(review.rating + 1, 6) %}<i class="ri-star-line"></i>{% endfor %}
+                        </div>
+                        {% endif %}
+                        <p class="text-gray-300 mt-2 text-sm leading-relaxed break-words">
+                            {{ review.content | truncate(300) }}
+                        </p>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <p class="text-gray-400">No reviews found for this show yet.</p>
+            {% endif %}
+        </div>
+
+        <button id="scroll-right-btn" class="bg-purple-600/30 p-2 rounded-full hover:bg-purple-600/60 transition-colors disabled:opacity-50 disabled:cursor-not-allowed">
+            <i class="ri-arrow-right-s-line text-2xl"></i>
+        </button>
+    </div>
+
+    <div class="mt-8 border-t border-white/10 pt-6">
+        <h3 class="text-3xl font-extrabold mb-4 font-['Unbounded']">Add Your Review</h3>
+        <div id="review-message" class="mb-4"></div>
+        <div class="flex items-center mb-4">
+            <span class="mr-4 text-gray-300">Your Rating:</span>
+            <div id="star-rating" class="flex flex-row-reverse justify-end text-3xl">
+                <input type="radio" id="star5" name="rating" value="5" class="hidden peer"/>
+                <label for="star5" class="cursor-pointer text-gray-500 peer-hover:text-yellow-400 hover:text-yellow-400 peer-checked:text-yellow-400 transition"><i class="ri-star-fill"></i></label>
+                <input type="radio" id="star4" name="rating" value="4" class="hidden peer"/>
+                <label for="star4" class="cursor-pointer text-gray-500 peer-hover:text-yellow-400 hover:text-yellow-400 peer-checked:text-yellow-400 transition"><i class="ri-star-fill"></i></label>
+                <input type="radio" id="star3" name="rating" value="3" class="hidden peer"/>
+                <label for="star3" class="cursor-pointer text-gray-500 peer-hover:text-yellow-400 hover:text-yellow-400 peer-checked:text-yellow-400 transition"><i class="ri-star-fill"></i></label>
+                <input type="radio" id="star2" name="rating" value="2" class="hidden peer"/>
+                <label for="star2" class="cursor-pointer text-gray-500 peer-hover:text-yellow-400 hover:text-yellow-400 peer-checked:text-yellow-400 transition"><i class="ri-star-fill"></i></label>
+                <input type="radio" id="star1" name="rating" value="1" class="hidden peer"/>
+                <label for="star1" class="cursor-pointer text-gray-500 peer-hover:text-yellow-400 hover:text-yellow-400 peer-checked:text-yellow-400 transition"><i class="ri-star-fill"></i></label>
+            </div>
+        </div>
+        <textarea id="reviewText" rows="4" placeholder="Write your review here..." class="w-full p-4 rounded-lg bg-[#20222e] border border-white/20 text-white focus:outline-none focus:border-purple-500"></textarea>
+        <button id="submitReviewBtn" class="mt-4 bg-gradient-to-tr from-purple-500 to-fuchsia-500 text-white px-6 py-3 font-extrabold rounded-xl shadow-lg hover:scale-105 transition btn-shadow-pulse">Submit Review</button>
+    </div>
+</section>
+      
+    </div>
+  </div>
+</main>
+
+<script src="{{ url_for('static', filename='js/tv_details.js') }}"></script>
+<script src="{{ url_for('static', filename='js/watchlist.js') }}"></script>
+</body>
+</html>

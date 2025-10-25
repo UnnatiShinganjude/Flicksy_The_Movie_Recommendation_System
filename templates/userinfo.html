@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Flicksy — Complete Your Profile</title>
+
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com"></script>
+
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700;800&family=Unbounded:wght@600;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="{{ url_for('static', filename='css/userinfo.css') }}">
+</head>
+<style>
+/* ---------- Body & Background ---------- */
+body { 
+    background: linear-gradient(to bottom, #05060a, #0b0f1a); 
+    color: #e6ebf3; 
+    font-family:'Plus Jakarta Sans'; 
+    overflow-x:hidden; 
+}
+
+/* ---------- Stars Animation ---------- */
+.stars, .stars:before, .stars:after {
+    position: fixed; top:0; left:0; width:100%; height:100%; content:""; pointer-events:none; background-repeat:repeat; background-size:contain;
+}
+.stars { 
+    background-image: radial-gradient(1px 1px at 20px 30px, rgba(255,255,255,.6) 50%, transparent 51%),
+                      radial-gradient(1px 1px at 120px 80px, rgba(255,255,255,.35) 50%, transparent 51%),
+                      radial-gradient(1px 1px at 300px 200px, rgba(255,255,255,.25) 50%, transparent 51%);
+    animation: drift 90s linear infinite; 
+}
+.stars:before { 
+    background-image: radial-gradient(1px 1px at 50px 60px, rgba(255,255,255,.5) 50%, transparent 51%),
+                      radial-gradient(1px 1px at 250px 140px, rgba(255,255,255,.4) 50%, transparent 51%);
+    animation: drift 120s linear infinite reverse; 
+    opacity:.7; 
+}
+.stars:after { 
+    background-image: radial-gradient(2px 2px at 160px 40px, rgba(255,255,255,.25) 50%, transparent 51%),
+                      radial-gradient(1px 1px at 90px 250px, rgba(255,255,255,.3) 50%, transparent 51%);
+    animation: drift 150s linear infinite; 
+    opacity:.5; 
+}
+@keyframes drift { 
+    from { background-position:0 0,0 0,0 0; } 
+    to { background-position:-2000px -1200px,1000px -800,-1500px 1200px; } 
+}
+
+/* ---------- Floating Panels ---------- */
+@keyframes float {0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);} }
+.float { animation: float 6s ease-in-out infinite alternate; }
+
+/* ---------- Glass Effect ---------- */
+.glass { 
+    backdrop-filter: blur(15px); 
+    background: rgba(16,18,26,0.8); 
+    border: 1px solid rgba(255,255,255,0.1); 
+    border-radius: 2rem; 
+    box-shadow: 0 8px 32px rgba(0,0,0,0.6); 
+    position: relative; 
+}
+
+/* ---------- Button Selection ---------- */
+.selected-btn { border: 2px solid #ec4899; color:#f472b6; }
+
+/* ---------- Actor Image Selection ---------- */
+.actor { border-radius:50%; border:2px solid transparent; cursor:pointer; transition:0.3s; }
+.actor.selected { border-color:#ec4899; }
+.panel img:hover { transform: scale(1.05); transition: 0.3s ease; }
+
+/* ---------- Shimmer Effect ---------- */
+.shimmer-glow {
+    position:absolute; inset:0; border-radius:2rem;
+    background: linear-gradient(120deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.08) 50%, rgba(255,255,255,0) 100%);
+    transform: translateX(-100%);
+    animation: shimmerSlow 6s infinite linear;
+    pointer-events:none;
+    z-index:1;
+}
+@keyframes shimmerSlow {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
+}
+
+/* ---------- Profile Overlay Glass Panel ---------- */
+#profileOverlay .glass {
+    max-height: 90vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 2rem;
+    border-radius: 2rem;
+    background: rgba(16,18,26,0.8);
+    backdrop-filter: blur(15px);
+    border: 2px solid rgba(255,255,255,0.2);
+    box-shadow: 0 0 20px rgba(236,72,153,0.6), 0 0 40px rgba(236,72,153,0.3), 0 0 60px rgba(236,72,153,0.2);
+    position: relative;
+}
+
+/* Hide scrollbars */
+#profileOverlay .glass::-webkit-scrollbar { width: 0px; background: transparent; }
+#profileOverlay .glass { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* ---------- Profile Picture Button ---------- */
+#profilePicInput {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 1rem;
+    background: linear-gradient(135deg, #ec4899, #8b5cf6);
+    color: white;
+    font-weight: 600;
+    cursor: pointer;
+    border: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 10px rgba(236,72,153,0.6), 0 0 20px rgba(139,92,246,0.4);
+}
+#profilePicInput:hover {
+    transform: scale(1.05);
+    box-shadow: 0 0 20px rgba(236,72,153,0.8), 0 0 40px rgba(139,92,246,0.6);
+}
+@keyframes spinLogo {
+    0% { transform: rotate(0deg); }
+    100% { transform: rotate(360deg); }
+}
+
+.spinning-logo {
+    animation: spinLogo 10s linear infinite;
+}
+
+.selected-btn {
+    border-color: #ec4899; /* Pink border */
+    color: #f472b6;       /* Lighter pink text */
+    background-color: rgba(236, 72, 153, 0.1); /* Faint pink background */
+}
+
+</style>
+<body>
+    
+
+<body>
+    
+    <div class="stars"></div>
+   <main class="hero min-h-screen grid place-items-center perspective-[1400px] pt-16">
+        <section class="hero-inner w-[92vw] max-w-[1200px] grid place-items-center gap-6">
+            <div class="portals grid grid-cols-5 gap-4 w-full preserve-3d">
+                <div class="panel relative pt-[160%] rounded-xl overflow-hidden bg-gradient-to-b from-white/8 to-white/2 border border-white/10 shadow float">
+                   <img src="{{ url_for('static', filename='images/p1.jpg') }}"  class="absolute inset-0 w-full h-full object-cover filter saturate-[1.1] contrast-[1.05] brightness-[.95]">
+                </div>
+                <div class="panel relative pt-[160%] rounded-xl overflow-hidden bg-gradient-to-b from-white/8 to-white/2 border border-white/10 shadow float">
+                    <img src="{{ url_for('static', filename='images/p2.jpg') }}"  class="absolute inset-0 w-full h-full object-cover filter saturate-[1.1] contrast-[1.05] brightness-[.95]">
+                </div>
+                <div class="panel relative pt-[160%] rounded-xl overflow-hidden bg-gradient-to-b from-white/8 to-white/2 border border-white/10 shadow float">
+                    <div class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2">
+                        <img src="{{ url_for('static', filename='images/image.png') }}" alt="Logo"  class="w-16 h-16 object-cover rounded-full drop-shadow-[0_0_15px_rgba(255,255,255,0.8)] spinning-logo pointer-events-none"/>
+                    </div>
+                </div>
+                <div class="panel relative pt-[160%] rounded-xl overflow-hidden bg-gradient-to-b from-white/8 to-white/2 border border-white/10 shadow float">
+                    <img src="{{ url_for('static', filename='images/p3.jpg') }}"  class="absolute inset-0 w-full h-full object-cover filter saturate-[1.1] contrast-[1.05] brightness-[.95]">
+                </div>
+                <div class="panel relative pt-[160%] rounded-xl overflow-hidden bg-gradient-to-b from-white/8 to-white/2 border border-white/10 shadow float">
+                    <img src="{{ url_for('static', filename='images/p4.jpg') }}"  class="absolute inset-0 w-full h-full object-cover filter saturate-[1.1] contrast-[1.05] brightness-[.95]">
+                </div>
+            </div>
+
+            <h1 class="font-['Unbounded'] font-extrabold text-center text-[clamp(38px,6vw,72px)] leading-[1.04] mt-6">
+                <p style="font-size: 30px;">Choose your Avatar</p>
+                Discover, collect & rate <span class="bg-gradient-to-tr from-cyan-400 to-pink-500 bg-clip-text text-transparent">movies</span>
+            </h1>
+            <p class="text-gray-400 text-center max-w-xl mt-2">
+                Cinematic onboarding for our recommendation engine. Create your profile, pick moods & genres, and we’ll start suggesting films you’ll actually enjoy.
+            </p>
+
+            <div class="flex gap-4 mt-6 flex-wrap justify-center">
+                <button id="createProfileBtn" class="bg-gradient-to-tr from-purple-500 to-pink-500 text-white px-6 py-3 font-extrabold rounded-xl shadow-lg hover:scale-[1.02] transition">Create Profile</button>
+                
+            </div>
+        </section>
+    </main>
+
+    <form id="profileForm" method="POST" action="{{ url_for('setup_profile', user_id=user.user_id) }}"enctype="multipart/form-data" class="fixed inset-0 z-30 flex items-center justify-center p-6 bg-black/40 backdrop-blur-sm hidden">
+        <div class="absolute inset-0 bg-gradient-to-r from-purple-500 via-pink-500 to-cyan-400 opacity-10 blur-2xl"></div>
+        <div class="glass relative p-8 max-w-3xl w-full max-h-[90vh] overflow-y-auto space-y-6 z-10 shadow-xl border-2 border-pink-500">
+            <div class="shimmer-glow"></div>
+            
+            <button type="button" id="closeOverlay" class="absolute top-4 right-4 text-white text-2xl font-bold hover:text-pink-500 z-20">&times;</button>
+            
+            <h1 class="text-3xl font-bold text-center text-white">Complete Your Profile</h1>
+            <p class="text-center text-gray-400 -mt-4">This helps us recommend movies you'll love.</p>
+
+            <div class="flex flex-col items-center space-y-4 z-10 relative">
+                <img id="profileImagePreview" src="{{ url_for('static', filename='images/default_avatar.png') }}" class="w-32 h-32 rounded-full shadow-lg border-2 border-white/20 object-cover">
+                <button type="button" id="choosePicBtn" class="px-6 py-2 bg-pink-500 text-white rounded-full font-semibold shadow-lg hover:scale-105">Choose Picture</button>
+                <input type="hidden" id="selected_avatar_path" name="profile_pic_path" value="">
+                <input type="file" id="profilePicUpload" name="profile_pic_file" class="hidden" accept="image/*">
+            </div>
+
+    
+
+                    <!-- Profile Picture & Choose Button -->
+ 
+    
+
+         <!-- Input Fields (ONLY AGE, simplified and styled) -->
+    <div class="z-10 relative">
+        <label for="ageInput" class="text-sm text-gray-400 block mb-1">Your Age</label>
+        <input type="number" id="ageInput" placeholder="Age (e.g., 25)" min="5" max="100" class="w-full p-3 rounded-xl bg-[#20222e] border border-white/20 text-white focus:outline-none focus:border-pink-500 shadow-inner">
+    </div>
+
+    <div class="z-10 relative">
+    <h2 class="text-white font-semibold mb-3 text-xl border-l-4 border-pink-500 pl-3">Languages You Prefer</h2>
+    <div id="languageButtons" class="flex flex-wrap gap-3">
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">English</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Hindi</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Spanish</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">French</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">German</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Japanese</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Korean</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Italian</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Chinese</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Portuguese</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Arabic</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Bengali</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Dutch</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Russian</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Turkish</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Tamil</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Telugu</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Ukrainian</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Urdu</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Vietnamese</button>
+    </div>
+</div>
+
+   <div class="z-10 relative">
+    <h2 class="text-white font-semibold mb-3 text-xl border-l-4 border-pink-500 pl-3">Select Genres</h2>
+    <div id="genreButtons" class="flex flex-wrap gap-3">
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Action</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Comedy</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Horror</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Drama</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Sci-Fi</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Romance</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Thriller</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Fantasy</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Mystery</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Animation</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Documentary</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Musical</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Crime</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Biography</button>
+    </div>
+</div>
+
+    <div class="z-10 relative">
+    <h2 class="text-white font-semibold mb-3 text-xl border-l-4 border-pink-500 pl-3">Streaming Platforms</h2>
+    <div id="platformButtons" class="flex flex-wrap gap-3">
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Netflix</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Prime</button>
+        <button type="button" class="px-3 py-1 rounded-full border border-white/20 text-gray-200 hover:bg-pink-500/20 transition-colors duration-200">Disney+</button>
+    </div>
+</div>
+
+
+
+    <!-- Save Button -->
+    <button id="saveProfileBtn" class="bg-gradient-to-tr from-purple-500 to-pink-500 text-white px-6 py-3 font-extrabold rounded-xl shadow-lg w-full z-10 relative hover:from-purple-600 hover:to-pink-600 transition-colors duration-200">
+        Save Profile
+    </button>
+    </form>
+
+<script>
+    // --- Form Overlay Logic ---
+    const profileForm = document.getElementById('profileForm');
+    const createProfileBtn = document.getElementById('createProfileBtn');
+    const closeOverlayBtn = document.getElementById('closeOverlay');
+    if (createProfileBtn) {
+        createProfileBtn.addEventListener('click', () => profileForm.classList.remove('hidden'));
+    }
+    if (closeOverlayBtn) {
+        closeOverlayBtn.addEventListener('click', () => profileForm.classList.add('hidden'));
+    }
+
+    // --- Avatar & Upload Logic ---
+    const panelImages = document.querySelectorAll('.panel img');
+    const imagePreview = document.getElementById('profileImagePreview');
+    const hiddenAvatarInput = document.getElementById('selected_avatar_path');
+    const profilePicUploadInput = document.getElementById('profilePicUpload');
+    const choosePicBtn = document.getElementById('choosePicBtn');
+
+    // This loop goes through each avatar image
+    panelImages.forEach(img => {
+        const clickableElement = img.closest('.panel');
+        if (clickableElement && !img.src.includes('image.png')) { 
+            clickableElement.addEventListener('click', () => {
+                // First, remove the highlight from all other panels
+                panelImages.forEach(i => i.closest('.panel').classList.remove('selected-panel'));
+                // Then, add the highlight to the one you just clicked
+                clickableElement.classList.add('selected-panel');
+
+                imagePreview.src = img.src;
+                const staticPath = new URL(img.src).pathname.replace('/static/', '');
+                hiddenAvatarInput.value = staticPath;
+                profilePicUploadInput.value = ''; // Clear file input
+            });
+        }
+    });
+
+    // Logic for the "Choose Picture" button
+    choosePicBtn.addEventListener('click', () => profilePicUploadInput.click());
+
+    // Logic for when a custom file is chosen
+    profilePicUploadInput.addEventListener('change', (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                imagePreview.src = e.target.result;
+                hiddenAvatarInput.value = ''; // Clear avatar path
+                // Remove highlight from all panels if a file is uploaded
+                panelImages.forEach(i => i.closest('.panel').classList.remove('selected-panel'));
+            };
+            reader.readAsDataURL(file);
+        }
+    });
+
+    // --- Preference Button Logic ---
+    function setupToggleButtons(containerId) {
+        document.querySelectorAll(`#${containerId} button`).forEach(btn => {
+            btn.addEventListener('click', () => btn.classList.toggle('selected-btn'));
+        });
+    }
+    setupToggleButtons('languageButtons');
+    setupToggleButtons('genreButtons');
+    setupToggleButtons('platformButtons');
+
+    // --- Form Submission Logic ---
+    profileForm.addEventListener('submit', function(event) {
+        document.querySelectorAll('.selected-btn').forEach(btn => {
+            const input = document.createElement('input');
+            input.type = 'hidden';
+            if (btn.parentElement.id === 'genreButtons') input.name = 'preferred_genres';
+            if (btn.parentElement.id === 'languageButtons') input.name = 'preferred_languages';
+            if (btn.parentElement.id === 'platformButtons') input.name = 'streaming_platforms';
+            input.value = btn.textContent;
+            profileForm.appendChild(input);
+        });
+    });
+</script>
+</body>
+</html>

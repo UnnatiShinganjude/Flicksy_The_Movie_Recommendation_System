@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Flicksy Login</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/tsparticles@2.11.0/tsparticles.bundle.min.js"></script>
+  <script>
+    tailwind.config = {
+      theme: {
+        extend: {
+          colors: {
+            primary: '#8C52FF',
+            secondary: '#FF5E84'
+          },
+          borderRadius: {
+            button: '8px'
+          },
+          fontFamily: {
+            pacifico: ['Pacifico', 'cursive'],
+            inter: ['Inter', 'sans-serif']
+          },
+          boxShadow: {
+            glow: '0 0 20px #8C52FF',
+            pinkglow: '0 0 20px #FF5E84'
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Font Awesome & Fonts -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+
+  <style>
+     body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: linear-gradient(to bottom right, #000000, #1a1a1a, #8C52FF);
+      min-height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+      position: relative;
+    }
+
+    /* Foggy flip animation */
+    @keyframes fogOpen {
+      0% {
+        opacity: 0;
+        transform: rotateY(-90deg) scale(0.8);
+        filter: blur(20px);
+      }
+      60% {
+        opacity: 0.6;
+        transform: rotateY(10deg) scale(1.1);
+        filter: blur(10px);
+      }
+      100% {
+        opacity: 1;
+        transform: rotateY(0deg) scale(1);
+        filter: blur(0px);
+      }
+    }
+
+    .foggy-door-card {
+      animation: fogOpen 1.4s ease-out both;
+      transform-style: preserve-3d;
+    }
+
+    .tab-active {
+      background-color: #8C52FF;
+      color: white;
+      box-shadow: 0 0 10px #8C52FF;
+    }
+
+    .tab-inactive {
+      background-color: white;
+      color: #8C52FF;
+      border: 2px solid #8C52FF;
+    }
+
+    input {
+      padding-left: 2rem;
+    }
+  </style>
+</head>
+<body>
+  <!-- Background particles -->
+  <div id="particles-js" class="absolute inset-0 -z-10"></div>
+
+<div class="foggy-door-card bg-white/10 backdrop-blur-xl p-8 w-full max-w-md rounded-xl shadow-glow border border-white/20">
+    <div class="flex flex-col items-center mb-6">
+      <img src="{{ url_for('static', filename='images/image.png') }}" alt="Logo" class="w-20 h-20 mb-2 rounded-full shadow-lg">
+
+      <h2 class="text-4xl font-pacifico text-primary">Flicksy</h2>
+    </div>
+
+    <!-- Tabs -->
+    <div class="flex justify-center gap-4 mb-6">
+      <a href="{{ url_for('login') }}" class="px-4 py-2 rounded-button tab-active">Login</a>
+      <a href="{{ url_for('register') }}" class="px-4 py-2 rounded-button tab-inactive">Sign Up</a>
+    </div>
+
+   <!-- Login Form -->
+<form method="POST" action="{{ url_for('login') }}" class="space-y-4">
+  <div class="relative">
+    <label class="text-sm text-white/80">Email</label>
+    <i class="fa-solid fa-at absolute left-3 bottom-2 text-white/70"></i>
+    <input type="email" name="email" placeholder="abc@email.com" required
+      class="w-full pl-10 mt-2 p-3 border border-white/20 rounded-button bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-primary" />
+  </div>
+
+  <div class="relative">
+    <label class="text-sm text-white/80">Password</label>
+    <i class="fa-solid fa-lock absolute left-3 bottom-2 text-white/70"></i>
+    <input type="password" name="password" placeholder="••••••••" required
+      class="w-full pl-10 mt-2 p-3 border border-white/20 rounded-button bg-white/5 text-white placeholder-white/50 focus:ring-2 focus:ring-secondary" />
+  </div>
+
+  <div class="flex justify-between items-center text-white/70 text-sm mt-2">
+    <label class="flex items-center space-x-2">
+      <input type="checkbox" class="form-checkbox bg-white/10 rounded border-white/30 checked:bg-primary">
+      <span>Remember me</span>
+    </label>
+    <a href="#" class="text-[#FF8F70] hover:text-[#FF5E84] hover:underline font-semibold">Forgot password?</a>
+  </div>
+
+  
+  <button type="submit"
+    class="w-full bg-gradient-to-r from-[#8C52FF] to-[#DA6AFF] text-white py-2 rounded-button font-semibold shadow-glow hover:scale-105 transition-all">
+    <i class="fa-solid fa-right-to-bracket mr-2"></i> Login
+  </button>
+</form>
+<!-- Flash Message Display -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    {% for category, message in messages %}
+      <div class="text-{{ 'red' if category == 'danger' else 'green' }}-600 font-medium mt-2">
+        {{ message }}
+      </div>
+    {% endfor %}
+  {% endif %}
+{% endwith %}
+
+
+  </div>
+
+  <!-- tsParticles Script -->
+  <script>
+    tsParticles.load("particles-js", {
+      particles: {
+        number: { value: 30 },
+        color: { value: "#8C52FF" },
+        size: { value: 3 },
+        move: { enable: true, speed: 1 },
+        opacity: { value: 0.5 },
+        links: { enable: true, color: "#8C52FF" }
+      }
+    });
+  </script>
+</body>
+</html>
+
+ 
+
+
+ 
